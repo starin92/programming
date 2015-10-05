@@ -32,7 +32,6 @@
     <script src="squeak-parser.js"></script>
     <script src="squeak-lib.js"></script>
     <script src="ometa-parser.js"></script>
-	<script src="grammar.js"></script>
     <script>
 
 // *****************************************************************************
@@ -50,8 +49,8 @@ function onShortCutKey(evt)
   }
   if (charCode == 68)
     doIt();
-  else if (charCode == 80)
-    printIt();
+  //else if (charCode == 80)
+  //  printIt();
   else
     return true
   if (evt.preventDefault) {
@@ -65,25 +64,25 @@ function onShortCutKey(evt)
   return false;
 }
 
-function printIt() {
-  var result
-  try { result =  evalSelection() }
-  catch (e) { return }
-  var editor = result.source.editor;
-  var end = result.source.end;
-  var head = editor.value.substring(0, end);
-  var tail = editor.value.substring(end);
-  var oldScrollTop = editor.scrollTop
-  editor.value = head + result.result + tail;
-  editor.scrollTop = oldScrollTop
-  setCaretSelection(editor, end, head.length + result.result.length);
-}
+//function printIt() {
+//  var result
+//  try { result =  evalSelection() }
+//  catch (e) { return }
+//  var editor = result.source.editor;
+//  var end = result.source.end;
+//  var head = editor.value.substring(0, end);
+//  var tail = editor.value.substring(end);
+//  var oldScrollTop = editor.scrollTop
+//  editor.value = head + result.result + tail;
+//  editor.scrollTop = oldScrollTop
+//  setCaretSelection(editor, end, head.length + result.result.length);
+//}
 
 function doIt() {
   var result
   try { result = evalSelection() }
   catch (e) { return }
-  result.source.editor.focus();
+  //result.source.editor.focus();
 }
 
 /* Get selection of textarea */
@@ -126,11 +125,11 @@ function setCaretSelection(field, start, end) {
 /* Get expression from textarea */
 function getSource() {
   var editor = workspace;
-  var selection = getCaretSelection(editor);
-  var start = selection.start;
-  var end = selection.end;
-  var text = editor.value.substring(start, end);
-  if (start == end) {
+  //var selection = getCaretSelection(editor);
+  //var start = selection.start;
+  //var end = selection.end;
+  var text = editor.value;
+  /*if (start == end) {
     var alltext = editor.value;
     var index = 0;
     if (start > 0 && alltext.charAt(start) == "\n")
@@ -143,12 +142,12 @@ function getSource() {
       end--
     text = alltext.substring(start, end);
     setCaretSelection(editor, start, end);
-  }
+  }*/
 
   var source = {
     editor: editor,
-    start: start,
-    end: end,
+    //start: start,
+    //end: end,
     text: text
   };
   return source;
@@ -163,13 +162,14 @@ function evalSelection() {
     try { form.translation.value = OMetaSqueakParser.translate(source.text) }
     catch (e) {
       if (e instanceof Fail) {
-        var failPos      = source.start + e.matcher.input.realPos() - 1,
-            errorMsg     = " Parse error ->",
-            oldScrollTop = form.source.scrollTop
-        form.source.value = form.source.value.substring(0, failPos) + errorMsg +
-                            form.source.value.substring(failPos, form.source.value.length)
-        form.source.scrollTop = oldScrollTop
-        setCaretSelection(form.source, failPos, failPos + errorMsg.length)
+		alert('Parse error in grammar at:'+e.matcher.input.realPos())
+        //var failPos      = source.start + e.matcher.input.realPos() - 1,
+        //    errorMsg     = " Parse error ->",
+        //    oldScrollTop = form.source.scrollTop
+        //form.source.value = form.source.value.substring(0, failPos) + errorMsg +
+        //                    form.source.value.substring(failPos, form.source.value.length)
+        //form.source.scrollTop = oldScrollTop
+        //setCaretSelection(form.source, failPos, failPos + errorMsg.length)
         e = new ParseError()
       }
       throw e
@@ -386,7 +386,7 @@ function toggleVisible(id) {
 <!--
       <b>Source</b><br>
 -->
-      <textarea cols=132 rows=24 name=source>
+      <textarea cols=0 rows=0 name=source style='visibility:hidden'>
 Turtle rt: n [self turnBy: n].
 Turtle lt: n [self turnBy: n negated].
 Turtle fd: n [self forwardBy: n].
@@ -457,7 +457,7 @@ smiley eval: '
 '
 
       </textarea><br>
-      <input type=button value="print it (ctrl+p)" onClick="printIt()">
+      <!-- <input type=button value="print it (ctrl+p)" onClick="printIt()"> -->
       <input type=button value="do it (ctrl+d)" onClick="doIt()">
       <br><br>
 <!--
