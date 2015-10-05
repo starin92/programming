@@ -1,0 +1,505 @@
+<!--
+  Copyright (c) 2007 Alessandro Warth <awarth@cs.ucla.edu>
+
+  Permission is hereby granted, free of charge, to any person
+  obtaining a copy of this software and associated documentation
+  files (the "Software"), to deal in the Software without
+  restriction, including without limitation the rights to use,
+  copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the
+  Software is furnished to do so, subject to the following
+  conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.
+!-->
+
+<html>
+  <head>
+    <title>Logo in OMeta/JS</title>
+    <script src="lib.js"></script>
+    <script src="ometa-base.js"></script>
+    <script src="parser.js"></script>
+    <script src="squeak-parser.js"></script>
+    <script src="squeak-lib.js"></script>
+    <script src="ometa-parser.js"></script>
+	<script src="grammar.js"></script>
+    <script>
+
+// *****************************************************************************
+// *** The code below was adapted from Takashi Yamamiya's Javascript Workspace,
+// *** http://metatoys.org/propella/js/workspace.js
+
+/* event handler for short cut key */
+function onShortCutKey(evt)
+{
+  evt = (evt) ? evt : window.event;
+  if (!evt) return;
+  var charCode = (evt.charCode) ? evt.charCode : evt.keyCode;
+  if (!(evt.altKey || evt.ctrlKey || evt.metaKey)) {
+    return true;
+  }
+  if (charCode == 68)
+    doIt();
+  else if (charCode == 80)
+    printIt();
+  else
+    return true
+  if (evt.preventDefault) {
+    evt.preventDefault()
+    evt.stopPropagation()
+  }
+  else {
+    evt.returnValue = false
+    evt.cancelBubble = true
+  }
+  return false;
+}
+
+function printIt() {
+  var result
+  try { result =  evalSelection() }
+  catch (e) { return }
+  var editor = result.source.editor;
+  var end = result.source.end;
+  var head = editor.value.substring(0, end);
+  var tail = editor.value.substring(end);
+  var oldScrollTop = editor.scrollTop
+  editor.value = head + result.result + tail;
+  editor.scrollTop = oldScrollTop
+  setCaretSelection(editor, end, head.length + result.result.length);
+}
+
+function doIt() {
+  var result
+  try { result = evalSelection() }
+  catch (e) { return }
+  result.source.editor.focus();
+}
+
+/* Get selection of textarea */
+function getCaretSelection(field) {
+    field.focus();
+    var result = {start: 0, end: 0};
+    // IE support based on http://groups.drupal.org/node/1210
+    if(typeof workspace.selectionEnd == "undefined") {
+        var range = document.selection.createRange();
+        var rangeCopy = range.duplicate();
+        rangeCopy.moveToElementText(field);
+        rangeCopy.setEndPoint( 'EndToEnd', range );
+        result.start = rangeCopy.text.length - range.text.length;
+        result.end = result.start + range.text.length;
+    } else {
+        result.start = field.selectionStart;
+        result.end = field.selectionEnd;
+    }
+    return result;
+}
+
+/* Set selection of textarea */
+function setCaretSelection(field, start, end) {
+    field.focus();
+    // IE
+    if(typeof workspace.selectionEnd == "undefined") {
+        var range = field.createTextRange()
+        range.expand("textedit");
+        var dStart = start - (field.value.substring(0, start).split("\n").length - 1);
+        var dEnd = end - field.value.length + field.value.substring(end + 1).split("\n").length - 1
+        range.moveStart("character", dStart)
+        range.moveEnd("character", dEnd)
+        range.select();
+    } else {
+        field.selectionStart = start;
+        field.selectionEnd = end;
+    }
+}
+
+/* Get expression from textarea */
+function getSource() {
+  var editor = workspace;
+  var selection = getCaretSelection(editor);
+  var start = selection.start;
+  var end = selection.end;
+  var text = editor.value.substring(start, end);
+  if (start == end) {
+    var alltext = editor.value;
+    var index = 0;
+    if (start > 0 && alltext.charAt(start) == "\n")
+      start--
+    while (start > 0 && alltext.charAt(start) != "\n")
+      start--
+    while (end < alltext.length && alltext.charAt(end) != "\r" && alltext.charAt(end) != "\n")
+      end++
+    if (end == alltext.length)
+      end--
+    text = alltext.substring(start, end);
+    setCaretSelection(editor, start, end);
+  }
+
+  var source = {
+    editor: editor,
+    start: start,
+    end: end,
+    text: text
+  };
+  return source;
+}
+
+function ParseError() { }
+
+function evalSelection() {
+  var source = getSource();
+  var result;
+  try {
+    try { form.translation.value = OMetaSqueakParser.translate(source.text) }
+    catch (e) {
+      if (e instanceof Fail) {
+        var failPos      = source.start + e.matcher.input.realPos() - 1,
+            errorMsg     = " Parse error ->",
+            oldScrollTop = form.source.scrollTop
+        form.source.value = form.source.value.substring(0, failPos) + errorMsg +
+                            form.source.value.substring(failPos, form.source.value.length)
+        form.source.scrollTop = oldScrollTop
+        setCaretSelection(form.source, failPos, failPos + errorMsg.length)
+        e = new ParseError()
+      }
+      throw e
+    }
+    result = eval(form.translation.value)
+  }
+  catch (e) {
+    if (!(e instanceof ParseError)) {
+      if (e instanceof Fail)
+        alert(e)
+      else
+        alert("uncaught exception: " + e)
+    }
+    throw e
+  }
+  result = [" ", printString(result)].squish().join('')
+  
+  resultObject = {
+    source: source,
+    result: result
+  };
+  return resultObject;
+}
+
+// *** End of JavaScript Workspace code.
+// *****************************************************************************
+
+
+/*
+JS SUCKS: can't make an object that pretends to be a function - they are not 1st class objects (implementations)
+ 
+  x = new Object()
+  x.apply = function($elf, args) { return args[0] + 1 }
+  x.call = function($elf, arg1) { return arg1 + 10 }
+  alert(x(5))
+
+  x = (function(arg1) { return arg1 + 1 }).delegated()
+  alert(x)
+  alert(x(100))
+*/
+
+Transcript = {
+  show:  function(x) {
+           form.transcript.value     = [form.transcript.value, x.asString()].join('')
+           form.transcript.scrollTop = form.transcript.scrollHeight
+           return null
+          },
+  cr:    function()  {
+           form.transcript.value     = [form.transcript.value, "\n"].join('')
+           form.transcript.scrollTop = form.transcript.scrollHeight
+           return null
+         },
+  clear: function()  {
+           form.transcript.value = ""
+           return null
+         }
+}
+
+Object.msleep = function(ms) {
+  var now      = new Date()
+      stopTime = new Date(now.getTime() + ms)
+  while (new Date() < stopTime)
+    ;
+  return null
+}
+
+eval(OMetaParser.matchAllwith(
+  "ometa OMetaSqueakParser : Parser {                                                                              \
+     topLevelExpr  ::= <foreign OMetaParser  #grammar>                                                             \
+                     | <foreign SqueakParser #expr>.                                                               \
+     topLevelExprs ::= <listOf #topLevelExpr '.'>:r (<token '.'> | <empty>) <spaces> <end> => [r delimWith: '; ']. \
+     iTranslate    ::= <topLevelExprs>:r                                                   => [r squish join: '']. \
+   }                                                                                                               ",
+  "grammar").squish().join(''))
+OMetaSqueakParser.translate = function(s) { return this.matchAllwith(s, "iTranslate") }
+OMetaSqueakParser.eval      = function(s) { return eval(this.translate(s)) }
+
+function autoexec() {
+  OMetaSqueakParser.eval(
+    "canvas := document createElement: 'canvas'.                                                    \
+     canvas setAttribute: 'width'  : '800'.                                                         \
+     canvas setAttribute: 'height' : '500'.                                                         \
+     (document getElementById: 'playArea') appendChild: canvas.                                     \
+     ctxt := canvas getContext: '2d'.                                                               \
+     ctxt at: #fillStyle put: 'rgb(200,0,0)'.                                                       \
+     ctxt fillRect: 10 : 10 : 55 : 50.                                                              \
+     ctxt at: #fillStyle put: 'rgba(0,0,200,0.5)'.                                                  \
+     ctxt fillRect: 30 : 30 : 55 : 50.                                                              \
+                                                                                                    \
+     ometa MDefSqueakParser : SqueakParser {                                                        \
+       unaryMsgPat       ::= <identifier>:m                        => [{{$'. m. $'}. {}}].          \
+       binaryMsgPat      ::= <binary>:m  <identifier>:a            => [{m squish join: ''. {a}}].   \
+       keywordMsgPatPart ::= <keyword>:k <identifier>:a            => [{k. a}].                     \
+       keywordMsgPat     ::= <keywordMsgPatPart>+:parts                                             \
+                               ![parts collect: [:p | p at: 0]]:ks                                  \
+                               ![parts collect: [:p | p at: 1]]:as                                  \
+                               ![ks squish join: '']:ks            => [{{$'. ks escape. $'}. as}].  \
+       msgPat            ::= <keywordMsgPat>                                                        \
+                           | <binaryMsgPat>                                                         \
+                           | <unaryMsgPat>.                                                         \
+       methodDef         ::= <identifier>:cls <msgPat>:nameAndArgs <block false>:body               \
+                               => [cls,, '.prototype[',, (nameAndArgs at: 0),, '] = ',,             \
+                                   'function(',, ((nameAndArgs at: 1) delimWith: ', '),, ') { ',,   \
+                                     'var $elf = this; ',,                                          \
+                                     'try { (',, body,, ')() } ',,                                  \
+                                     'catch (_r) { ',,                                              \
+                                       'if (_r instanceof Return) return _r.value;',,               \
+                                       'else throw _r } return this }'].                            \
+     }.                                                                                             \
+     ometa NewSqueakParser {                                                                        \
+        expr ::= <foreign MDefSqueakParser #methodDef>                                              \
+               | <foreign MDefSqueakParser #expr>.                                                  \
+     }.                                                                                             \
+     SqueakParser := NewSqueakParser.                                                               ")
+  OMetaSqueakParser.eval(
+    "Scheduler := SqueakObject subclassWithFields: 'tasks timeout'.                                 \
+     Scheduler initialize [                                                                         \
+       self                                                                                         \
+         tasks: {};                                                                                 \
+         timeout: 20;                                                                               \
+         tick;                                                                                      \
+         yourself                                                                                   \
+     ].                                                                                             \
+     Scheduler schedule: aTask [                                                                    \
+       self tasks addLast: aTask                                                                    \
+     ].                                                                                             \
+     Scheduler tick [                                                                               \
+       self tasks notEmpty ifTrue: [self tasks removeFirst value].                                  \
+       window setTimeout: [self tick] : self timeout                                                \
+     ].                                                                                             \
+     theScheduler := Scheduler new.                                                                 \
+                                                                                                    \
+     Turtle := SqueakObject subclassWithFields: 'x y angle color penDown'.                          \
+     Turtle initialize [                                                                            \
+       self                                                                                         \
+         x: 400;                                                                                    \
+         y: 250;                                                                                    \
+         angle: 0;                                                                                  \
+         color: 'black';                                                                            \
+         penDown: true                                                                              \
+     ].                                                                                             \
+     Turtle forwardBy: n [                                                                          \
+       theScheduler schedule: [                                                                     \
+         self penDown ifTrue: [                                                                     \
+           ctxt at: #strokeStyle put: self color.                                                   \
+           ctxt beginPath.                                                                          \
+           ctxt moveTo: self x : self y.                                                            \
+         ].                                                                                         \
+         self x: self x + (n * (Math cos: self angle)).                                             \
+         self y: self y + (n * (Math sin: self angle)).                                             \
+         self penDown ifTrue: [                                                                     \
+           ctxt lineTo: self x : self y.                                                            \
+           ctxt stroke.                                                                             \
+         ].                                                                                         \
+       ]                                                                                            \
+     ].                                                                                             \
+     Turtle turnBy: n [                                                                             \
+       theScheduler schedule: [                                                                     \
+         self angle: self angle + (n * (Math at: #PI) / 180).                                       \
+       ]                                                                                            \
+     ].                                                                                             \
+     Turtle repeat: n : aBlock [                                                                    \
+       theScheduler schedule: [                                                                     \
+         n timesRepeat: aBlock                                                                      \
+       ].                                                                                           \
+     ].                                                                                             \
+     Turtle setPenDown: aBoolean [                                                                  \
+       theScheduler schedule: [                                                                     \
+         self penDown: aBoolean                                                                     \
+       ]                                                                                            \
+     ].                                                                                             \
+     Turtle clear [                                                                                 \
+       theScheduler schedule: [                                                                     \
+         ctxt clearRect: 0 : 0 : (canvas at: #width) : (canvas at: #height)                         \
+       ]                                                                                            \
+     ]                                                                                              ")
+}
+
+function toggleVisible(id) {
+  var style = document.getElementById(id).style
+  if (style.display == "none") {
+    style.display = "block"
+    return "hide"
+  }
+  else {
+    style.display = "none"
+    return "show"
+  }
+}
+
+/*
+   JS SUCKS: Unfortunately, functions are not quite 1st class objects in "real" JS implementations.
+   This makes function proxies, like f below, not work:
+
+    f = (function(x) { return x + 1 }).delegated()
+    f.printString = function() { return "[:x | x + 1]" }
+*/
+
+    </script>
+  </head>
+  <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; autoexec()">
+    <table border=0><tr><td><h2><a href=prolog.html style="text-decoration: none; color: black">Logo</a> in OMeta/JS</h2></td></tr></table>
+<!--
+    <b><u>Instructions</u>:</b> the text area below (<b>source</b>) works just like a Smalltalk workspace.
+    To evaluate some code, just select it and press the "do it" button.
+    "Print it" is like "do it", but it also prints the result by sending it the <tt>printString</tt> message.
+    <br><br>
+-->
+    This page "autoexecs" some of the examples from the <a href=index.html>OMeta/JS demo page</a> (support for method declarations,
+    the canvas element, the <tt>Scheduler</tt> and <tt>Turtle</tt> classes) and uses them to build a Logo interpreter.
+    To make it go, select all of the code below and press the "do it" button.
+    <br><br>
+    <form id=myForm>
+<!--
+      <b>Source</b><br>
+-->
+      <textarea cols=132 rows=24 name=source>
+Turtle rt: n [self turnBy: n].
+Turtle lt: n [self turnBy: n negated].
+Turtle fd: n [self forwardBy: n].
+Turtle bk: n [self forwardBy: n negated].
+Turtle pu    [self setPenDown: false].
+Turtle pd    [self setPenDown: true].
+
+ometa LogoTranslator : Parser {
+  name         ::= <spaces> <firstAndRest #letter #letterOrDigit>:xs => [xs squish join: ''].
+  cmdName      ::= <name>:n
+                     ?[n ~= 'to'] ?[n ~= 'end'] ?[n ~= 'output']     => [n].
+  number       ::= <spaces> <digit>+.
+  arg          ::= <token ':'> <name>.
+  cmds         ::= <cmd>*:xs                                         => [xs delimWith: ';'].
+  block        ::= <token '['> <cmds>:xs <token ']'>                 => ['(function() {',, xs,, '})'].
+  primExpr     ::= <arg> | <number> | <block>
+                 | <token '('> (<expr> | <cmd>):x <token ')'>        => [x].
+  mulExpr      ::= <mulExpr>:x <token '*'> <primExpr>:y              => [x,, '*',, y]
+                 | <mulExpr>:x <token '/'> <primExpr>:y              => [x,, '/',, y]
+                 | <primExpr>.
+  addExpr      ::= <addExpr>:x <token '+'> <mulExpr>:y               => [x,, '+',, y]
+                 | <addExpr>:x <token '-'> <mulExpr>:y               => [x,, '-',, y]
+                 | <mulExpr>.
+  relExpr      ::= <addExpr>:x <token '<'>  <addExpr>:y              => [x,, '<',, y]
+                 | <addExpr>:x <token '<='> <addExpr>:y              => [x,, '<=',, y]
+                 | <addExpr>:x <token '>'>  <addExpr>:y              => [x,, '>',, y]
+                 | <addExpr>:x <token '>='> <addExpr>:y              => [x,, '>=',, y]
+                 | <addExpr>.
+  expr         ::= <relExpr>.
+  cmd          ::= <token 'output'> <expr>:x                         => ['return ',, x]
+                 | <cmdName>:n <expr>*:args                          => ['$elf.performwithArguments("',, n,, '", [',,
+                                                                             (args delimWith: ','),,
+                                                                          '])'].
+  decl         ::= <token 'to'> <cmdName>:n <arg>*:args
+                     <cmds>:body  <token 'end'>                      => ['$elf.',, n,, ' = ',,
+                                                                           'function(',, (args delimWith: ','),, ') {',,
+                                                                             body,,
+                                                                           '}'].
+  topLevelCmd  ::= <decl> | <cmd>.
+  topLevelCmds ::= <topLevelCmd>*:xs <spaces> <end>                  => [xs := '(function() { var $elf = this; ',,
+                                                                                 (xs delimWith: ';'),, '})'.
+                                                                         xs squish join: ''].
+}.
+
+Turtle eval: code [
+  | trans |
+  trans := LogoTranslator matchAll: code with: #topLevelCmds.
+  self at: #LOGODOIT put: (eval value: trans).
+  self LOGODOIT
+].
+
+Turtle if: cond : aBlock [
+  cond ifTrue: aBlock
+].
+
+smiley := Turtle new.
+smiley eval: '
+
+  to spiral :size :angle
+    if :size < 100 [
+      fd :size
+      rt :angle
+      spiral :size + 2 :angle
+    ]
+  end
+  spiral 0 89
+
+'
+
+      </textarea><br>
+      <input type=button value="print it (ctrl+p)" onClick="printIt()">
+      <input type=button value="do it (ctrl+d)" onClick="doIt()">
+      <br><br>
+<!--
+      <b>Translation</b>
+      <input type=button value="show/hide" onClick="this.value = toggleVisible('translation')">
+      <br>
+      <div id=translation style="{display: none}">
+-->
+        <input type=hidden name=translation>
+<!--
+      </div>
+      <b>Transcript</b>
+      <input type=button value="show/hide" onClick="this.value = toggleVisible('transcript')">
+      <br>
+      <div id=transcript style="{display: block}">
+        <textarea cols=132 rows=4 name=transcript></textArea>
+      </div>
+-->
+    </form>
+    <div id=playArea></div>
+<!--
+<b><u>Note</u>:</b> I have tested OMeta/JS on Firefox 2.0.0.9, Safari 3.0.4, and IE 7.0.5730.11.
+Please e-mail me if it doesn't work for you (don't forget to let me know what browser you are using).<br><br>
+<b><u>Known quirks</u>:</b><br>
+<bl>
+  <li>On Safari, ctrl+p and ctrl+d don't work.</li>
+  <li>On IE, ctrl+p works, but also makes a print dialog pop up.
+  <li>On IE, the canvas examples don't work.</li>
+</bl><br>
+<b><u>Acknowledgements</u>:</b>
+<bl>
+  <li>
+    the code for this user interface was adapted from Takashi Yamamiya's
+    <a href=http://metatoys.org/propella/js/workspace.cgi/Home>JavaScript Workspace</a>.
+  </li>
+  <li>
+    thanks to Dan Ingalls for suggesting the <tt>Turtle</tt> example.
+  </li>
+</bl>
+<br>
+To learn more about OMeta, click <a href=..>here</a>.<br>
+-->
+  </body>
+</html>
+
