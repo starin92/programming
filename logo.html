@@ -85,41 +85,9 @@ function doIt() {
   //result.source.editor.focus();
 }
 
-/* Get selection of textarea */
-function getCaretSelection(field) {
-    field.focus();
-    var result = {start: 0, end: 0};
-    // IE support based on http://groups.drupal.org/node/1210
-    if(typeof workspace.selectionEnd == "undefined") {
-        var range = document.selection.createRange();
-        var rangeCopy = range.duplicate();
-        rangeCopy.moveToElementText(field);
-        rangeCopy.setEndPoint( 'EndToEnd', range );
-        result.start = rangeCopy.text.length - range.text.length;
-        result.end = result.start + range.text.length;
-    } else {
-        result.start = field.selectionStart;
-        result.end = field.selectionEnd;
-    }
-    return result;
-}
-
-/* Set selection of textarea */
-function setCaretSelection(field, start, end) {
-    field.focus();
-    // IE
-    if(typeof workspace.selectionEnd == "undefined") {
-        var range = field.createTextRange()
-        range.expand("textedit");
-        var dStart = start - (field.value.substring(0, start).split("\n").length - 1);
-        var dEnd = end - field.value.length + field.value.substring(end + 1).split("\n").length - 1
-        range.moveStart("character", dStart)
-        range.moveEnd("character", dEnd)
-        range.select();
-    } else {
-        field.selectionStart = start;
-        field.selectionEnd = end;
-    }
+/* Get grammar from hidden textarea */
+function getGrammar() {
+  return document.getElementById('grammar').value;
 }
 
 /* Get expression from textarea */
@@ -155,6 +123,32 @@ function getSource() {
 
 function ParseError() { }
 
+function loadGrammar() {
+	var grammar = getGrammar();
+	var result;
+	  try {
+    try { form.translation.value = OMetaSqueakParser.translate(grammar) }
+    catch (e) {
+      if (e instanceof Fail) {
+		alert('Parse error in grammar at:'+e.matcher.input.realPos()+'\n'+grammar.substring(0,e.matcher.input.realPos()))
+        e = new ParseError()
+      }
+      throw e
+    }
+    result = eval(form.translation.value)
+  }
+  catch (e) {
+    if (!(e instanceof ParseError)) {
+      if (e instanceof Fail)
+        alert(e)
+      else
+        alert("uncaught exception: " + e)
+    }
+    throw e
+  }
+  //result = [" ", printString(result)].squish().join('')
+}
+
 function evalSelection() {
   var source = getSource();
   var result;
@@ -162,7 +156,7 @@ function evalSelection() {
     try { form.translation.value = OMetaSqueakParser.translate(source.text) }
     catch (e) {
       if (e instanceof Fail) {
-		alert('Parse error in grammar at:'+e.matcher.input.realPos())
+		alert('Parse error in input at:'+e.matcher.input.realPos())
         //var failPos      = source.start + e.matcher.input.realPos() - 1,
         //    errorMsg     = " Parse error ->",
         //    oldScrollTop = form.source.scrollTop
@@ -367,10 +361,9 @@ function toggleVisible(id) {
     f = (function(x) { return x + 1 }).delegated()
     f.printString = function() { return "[:x | x + 1]" }
 */
-
     </script>
   </head>
-  <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; autoexec()">
+  <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; autoexec(); loadGrammar();">
     <table border=0><tr><td><h2><a href=prolog.html style="text-decoration: none; color: black">Logo</a> in OMeta/JS</h2></td></tr></table>
 <!--
     <b><u>Instructions</u>:</b> the text area below (<b>source</b>) works just like a Smalltalk workspace.
@@ -386,7 +379,21 @@ function toggleVisible(id) {
 <!--
       <b>Source</b><br>
 -->
-      <textarea cols=0 rows=0 name=source style='visibility:hidden'>
+	<textarea cols=132 rows=10 name=source>
+smiley eval: '
+
+  to spiral :size :angle
+    if :size < 100 [
+      fd :size
+      rt :angle
+      spiral :size + 2 :angle
+    ]
+  end
+  spiral 0 89
+
+'
+	</textarea>
+      <textarea cols=0 rows=0 id=grammar style='display:none'>
 Turtle rt: n [self turnBy: n].
 Turtle lt: n [self turnBy: n negated].
 Turtle fd: n [self forwardBy: n].
@@ -443,18 +450,6 @@ Turtle if: cond : aBlock [
 ].
 
 smiley := Turtle new.
-smiley eval: '
-
-  to spiral :size :angle
-    if :size < 100 [
-      fd :size
-      rt :angle
-      spiral :size + 2 :angle
-    ]
-  end
-  spiral 0 89
-
-'
 
       </textarea><br>
       <!-- <input type=button value="print it (ctrl+p)" onClick="printIt()"> -->
