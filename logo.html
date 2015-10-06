@@ -25,7 +25,7 @@
 
 <html>
   <head>
-    <title>Logo in OMeta/JS</title>
+    <title>programing</title>
     <script src="lib.js"></script>
     <script src="ometa-base.js"></script>
     <script src="parser.js"></script>
@@ -80,7 +80,7 @@ function onShortCutKey(evt)
 
 function doIt() {
   var result
-  try { result = evalSelection() }
+  try { result = evalSource(getSource()) }
   catch (e) { return }
   //result.source.editor.focus();
 }
@@ -90,35 +90,13 @@ function getGrammar() {
   return document.getElementById('grammar').value;
 }
 
+function setSource(str) {
+  workspace.value = str;
+}
+
 /* Get expression from textarea */
 function getSource() {
-  var editor = workspace;
-  //var selection = getCaretSelection(editor);
-  //var start = selection.start;
-  //var end = selection.end;
-  var text = editor.value;
-  /*if (start == end) {
-    var alltext = editor.value;
-    var index = 0;
-    if (start > 0 && alltext.charAt(start) == "\n")
-      start--
-    while (start > 0 && alltext.charAt(start) != "\n")
-      start--
-    while (end < alltext.length && alltext.charAt(end) != "\r" && alltext.charAt(end) != "\n")
-      end++
-    if (end == alltext.length)
-      end--
-    text = alltext.substring(start, end);
-    setCaretSelection(editor, start, end);
-  }*/
-
-  var source = {
-    editor: editor,
-    //start: start,
-    //end: end,
-    text: text
-  };
-  return source;
+  return workspace.value;
 }
 
 function ParseError() { }
@@ -149,11 +127,13 @@ function loadGrammar() {
   //result = [" ", printString(result)].squish().join('')
 }
 
-function evalSelection() {
-  var source = getSource();
+function evalSource(source) {
+  //var source = getSource();
+  setSource(source);
+  source = "smiley eval: '"+source+"'";
   var result;
   try {
-    try { form.translation.value = OMetaSqueakParser.translate(source.text) }
+    try { form.translation.value = OMetaSqueakParser.translate(source) }
     catch (e) {
       if (e instanceof Fail) {
 		alert('Parse error in input at:'+e.matcher.input.realPos())
@@ -244,14 +224,11 @@ OMetaSqueakParser.eval      = function(s) { return eval(this.translate(s)) }
 function autoexec() {
   OMetaSqueakParser.eval(
     "canvas := document createElement: 'canvas'.                                                    \
-     canvas setAttribute: 'width'  : '800'.                                                         \
-     canvas setAttribute: 'height' : '500'.                                                         \
+     canvas setAttribute: 'width'  : '400'.                                                         \
+     canvas setAttribute: 'height' : '400'.                                                         \
+	   canvas setAttribute: 'style' : 'border:1px solid #000000;'.                                    \
      (document getElementById: 'playArea') appendChild: canvas.                                     \
      ctxt := canvas getContext: '2d'.                                                               \
-     ctxt at: #fillStyle put: 'rgb(200,0,0)'.                                                       \
-     ctxt fillRect: 10 : 10 : 55 : 50.                                                              \
-     ctxt at: #fillStyle put: 'rgba(0,0,200,0.5)'.                                                  \
-     ctxt fillRect: 30 : 30 : 55 : 50.                                                              \
                                                                                                     \
      ometa MDefSqueakParser : SqueakParser {                                                        \
        unaryMsgPat       ::= <identifier>:m                        => [{{$'. m. $'}. {}}].          \
@@ -299,8 +276,8 @@ function autoexec() {
      Turtle := SqueakObject subclassWithFields: 'x y angle color penDown'.                          \
      Turtle initialize [                                                                            \
        self                                                                                         \
-         x: 400;                                                                                    \
-         y: 250;                                                                                    \
+         x: 200;                                                                                    \
+         y: 200;                                                                                    \
          angle: 0;                                                                                  \
          color: 'black';                                                                            \
          penDown: true                                                                              \
@@ -364,35 +341,47 @@ function toggleVisible(id) {
     </script>
   </head>
   <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; autoexec(); loadGrammar();">
-    <table border=0><tr><td><h2><a href=prolog.html style="text-decoration: none; color: black">Logo</a> in OMeta/JS</h2></td></tr></table>
+    <!-- <table border=0><tr><td><h2>programming</h2></td></tr></table> -->
 <!--
     <b><u>Instructions</u>:</b> the text area below (<b>source</b>) works just like a Smalltalk workspace.
     To evaluate some code, just select it and press the "do it" button.
     "Print it" is like "do it", but it also prints the result by sending it the <tt>printString</tt> message.
     <br><br>
--->
+
     This page "autoexecs" some of the examples from the <a href=index.html>OMeta/JS demo page</a> (support for method declarations,
     the canvas element, the <tt>Scheduler</tt> and <tt>Turtle</tt> classes) and uses them to build a Logo interpreter.
     To make it go, select all of the code below and press the "do it" button.
-    <br><br>
+    <br><br>-->
+    <div id=playArea></div>
+    <br></br>
     <form id=myForm>
 <!--
       <b>Source</b><br>
 -->
+
+  <input type=button value="line" onClick="evalSource('fd 10')">
+  <input type=button value="rotate right" onClick="evalSource('rt 5')">
+  <input type=button value="rotate left" onClick="evalSource('lt 5')">
+  <input type=button value="pen up" onClick="evalSource('pu')">
+  <input type=button value="pen down" onClick="evalSource('pd')">
+  <input type=button value="clear" onClick="evalSource('clear')">
+
+  <br>
+
+  <br><br>
+
 	<textarea cols=132 rows=10 name=source>
-smiley eval: '
+to spiral :size :angle
+if :size < 100 [
+  fd :size
+  rt :angle
+  spiral :size + 2 :angle
+]
+end
+spiral 0 89
 
-  to spiral :size :angle
-    if :size < 100 [
-      fd :size
-      rt :angle
-      spiral :size + 2 :angle
-    ]
-  end
-  spiral 0 89
-
-'
 	</textarea>
+
       <textarea cols=0 rows=0 id=grammar style='display:none'>
 Turtle rt: n [self turnBy: n].
 Turtle lt: n [self turnBy: n negated].
@@ -472,7 +461,7 @@ smiley := Turtle new.
       </div>
 -->
     </form>
-    <div id=playArea></div>
+
 <!--
 <b><u>Note</u>:</b> I have tested OMeta/JS on Firefox 2.0.0.9, Safari 3.0.4, and IE 7.0.5730.11.
 Please e-mail me if it doesn't work for you (don't forget to let me know what browser you are using).<br><br>
