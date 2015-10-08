@@ -175,6 +175,45 @@ function printPositionAndAngle(){
   document.getElementById('locationText').innerHTML = text;
 }
 
+function line2click(e){
+  context = this.getContext('2d');
+
+  var p = getCursorPosition(e);
+  mx = p[0] - this.offsetLeft;
+  my = p[1] - this.offsetTop;
+
+  dx = mx - smiley.x();
+  dy = my - smiley.y();
+
+  angleFinal = Math.atan2(dy,dx);
+  degreeTurn = Math.round( (angleFinal - smiley.angle())/Math.PI*180 );
+  disp = Math.round(Math.sqrt(dx*dx+dy*dy));
+
+  turnCmd = degreeTurn<0?'lt '+(-degreeTurn):'rt '+degreeTurn;
+
+  //console.log('rt '+degreeTurn+' fd '+disp);
+  evalSource(turnCmd+' fd '+disp);
+}
+
+function setUpCanvas(){
+  document.getElementById('canvas').addEventListener('click', line2click);
+}
+
+function getCursorPosition(e) {
+    var x;
+    var y;
+
+    if (e.pageX != undefined && e.pageY != undefined) {
+        x = e.pageX;
+        y = e.pageY;
+    } else {
+        x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+    
+    return [x, y];
+}
+
 // *** End of JavaScript Workspace code.
 // *****************************************************************************
 
@@ -234,6 +273,7 @@ function autoexec() {
      canvas setAttribute: 'width'  : '400'.                                                         \
      canvas setAttribute: 'height' : '400'.                                                         \
 	   canvas setAttribute: 'style' : 'border:1px solid #000000;'.                                    \
+     canvas setAttribute: 'id' : 'canvas'.                                                          \
      (document getElementById: 'playArea') appendChild: canvas.                                     \
      ctxt := canvas getContext: '2d'.                                                               \
                                                                                                     \
@@ -349,7 +389,7 @@ function toggleVisible(id) {
 */
     </script>
   </head>
-  <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; autoexec(); loadGrammar();">
+  <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; console.log('Auto Exec Setup...'); autoexec(); console.log('Loading Grammar...'); loadGrammar(); setUpCanvas(); console.log('Done');">
     <!-- <table border=0><tr><td><h2>programming</h2></td></tr></table> -->
 <!--
     <b><u>Instructions</u>:</b> the text area below (<b>source</b>) works just like a Smalltalk workspace.
