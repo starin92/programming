@@ -105,7 +105,7 @@ function loadGrammar() {
 	var grammar = getGrammar();
 	var result;
 	  try {
-    try { form.translation.value = OMetaSqueakParser.translate(grammar) }
+    try { translation = OMetaSqueakParser.translate(grammar) }
     catch (e) {
       if (e instanceof Fail) {
 		alert('Parse error in grammar at:'+e.matcher.input.realPos()+'\n'+grammar.substring(0,e.matcher.input.realPos()))
@@ -113,7 +113,7 @@ function loadGrammar() {
       }
       throw e
     }
-    result = eval(form.translation.value)
+    result = eval(translation)
   }
   catch (e) {
     if (!(e instanceof ParseError)) {
@@ -133,7 +133,7 @@ function evalSource(source) {
   source = "smiley eval: '"+source+"'";
   var result;
   try {
-    try { form.translation.value = OMetaSqueakParser.translate(source) }
+    try { translation = OMetaSqueakParser.translate(source) }
     catch (e) {
       if (e instanceof Fail) {
 		alert('Parse error in input at:'+e.matcher.input.realPos())
@@ -148,7 +148,7 @@ function evalSource(source) {
       }
       throw e
     }
-    result = eval(form.translation.value)
+    result = eval(translation)
   }
   catch (e) {
     if (!(e instanceof ParseError)) {
@@ -216,45 +216,6 @@ function getCursorPosition(e) {
 
 // *** End of JavaScript Workspace code.
 // *****************************************************************************
-
-
-/*
-JS SUCKS: can't make an object that pretends to be a function - they are not 1st class objects (implementations)
- 
-  x = new Object()
-  x.apply = function($elf, args) { return args[0] + 1 }
-  x.call = function($elf, arg1) { return arg1 + 10 }
-  alert(x(5))
-
-  x = (function(arg1) { return arg1 + 1 }).delegated()
-  alert(x)
-  alert(x(100))
-*/
-
-Transcript = {
-  show:  function(x) {
-           form.transcript.value     = [form.transcript.value, x.asString()].join('')
-           form.transcript.scrollTop = form.transcript.scrollHeight
-           return null
-          },
-  cr:    function()  {
-           form.transcript.value     = [form.transcript.value, "\n"].join('')
-           form.transcript.scrollTop = form.transcript.scrollHeight
-           return null
-         },
-  clear: function()  {
-           form.transcript.value = ""
-           return null
-         }
-}
-
-Object.msleep = function(ms) {
-  var now      = new Date()
-      stopTime = new Date(now.getTime() + ms)
-  while (new Date() < stopTime)
-    ;
-  return null
-}
 
 eval(OMetaParser.matchAllwith(
   "ometa OMetaSqueakParser : Parser {                                                                              \
@@ -367,60 +328,28 @@ function autoexec() {
        ]                                                                                            \
      ]                                                                                              ")
 }
-
-function toggleVisible(id) {
-  var style = document.getElementById(id).style
-  if (style.display == "none") {
-    style.display = "block"
-    return "hide"
-  }
-  else {
-    style.display = "none"
-    return "show"
-  }
-}
-
-/*
-   JS SUCKS: Unfortunately, functions are not quite 1st class objects in "real" JS implementations.
-   This makes function proxies, like f below, not work:
-
-    f = (function(x) { return x + 1 }).delegated()
-    f.printString = function() { return "[:x | x + 1]" }
-*/
     </script>
   </head>
+
+
   <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; console.log('Auto Exec Setup...'); autoexec(); console.log('Loading Grammar...'); loadGrammar(); setUpCanvas(); console.log('Done');">
-    <!-- <table border=0><tr><td><h2>programming</h2></td></tr></table> -->
-<!--
-    <b><u>Instructions</u>:</b> the text area below (<b>source</b>) works just like a Smalltalk workspace.
-    To evaluate some code, just select it and press the "do it" button.
-    "Print it" is like "do it", but it also prints the result by sending it the <tt>printString</tt> message.
-    <br><br>
-
-    This page "autoexecs" some of the examples from the <a href=index.html>OMeta/JS demo page</a> (support for method declarations,
-    the canvas element, the <tt>Scheduler</tt> and <tt>Turtle</tt> classes) and uses them to build a Logo interpreter.
-    To make it go, select all of the code below and press the "do it" button.
-    <br><br>-->
     <div id=playArea></div>
-    <p id='locationText'>200,200,0</p>
-    <br></br>
-    <form id=myForm>
-<!--
-      <b>Source</b><br>
--->
+      <p id='locationText'>200,200,0</p>
+      <br></br>
+      <form id=myForm>
 
-  <input type=button value="line" onClick="evalSource('fd 10')">
-  <input type=button value="rotate right" onClick="evalSource('rt 5')">
-  <input type=button value="rotate left" onClick="evalSource('lt 5')">
-  <input type=button value="pen up" onClick="evalSource('pu')">
-  <input type=button value="pen down" onClick="evalSource('pd')">
-  <input type=button value="clear" onClick="evalSource('clear')">
+      <input type=button value="line" onClick="evalSource('fd 10')">
+      <input type=button value="rotate right" onClick="evalSource('rt 5')">
+      <input type=button value="rotate left" onClick="evalSource('lt 5')">
+      <input type=button value="pen up" onClick="evalSource('pu')">
+      <input type=button value="pen down" onClick="evalSource('pd')">
+      <input type=button value="clear" onClick="evalSource('clear')">
 
-  <br>
+      <br>
 
-  <br><br>
+      <br><br>
 
-	<textarea cols=132 rows=10 name=source>
+      <textarea cols=132 rows=10 name=source>
 to spiral :size :angle
 if :size < 100 [
   fd :size
@@ -430,7 +359,7 @@ if :size < 100 [
 end
 spiral 0 89
 
-	</textarea>
+	    </textarea>
 
       <textarea cols=0 rows=0 id=grammar style='display:none'>
 Turtle rt: n [self turnBy: n].
@@ -494,46 +423,7 @@ smiley := Turtle new.
       <!-- <input type=button value="print it (ctrl+p)" onClick="printIt()"> -->
       <input type=button value="do it (ctrl+d)" onClick="doIt()">
       <br><br>
-<!--
-      <b>Translation</b>
-      <input type=button value="show/hide" onClick="this.value = toggleVisible('translation')">
-      <br>
-      <div id=translation style="{display: none}">
--->
-        <input type=hidden name=translation>
-<!--
-      </div>
-      <b>Transcript</b>
-      <input type=button value="show/hide" onClick="this.value = toggleVisible('transcript')">
-      <br>
-      <div id=transcript style="{display: block}">
-        <textarea cols=132 rows=4 name=transcript></textArea>
-      </div>
--->
     </form>
-
-<!--
-<b><u>Note</u>:</b> I have tested OMeta/JS on Firefox 2.0.0.9, Safari 3.0.4, and IE 7.0.5730.11.
-Please e-mail me if it doesn't work for you (don't forget to let me know what browser you are using).<br><br>
-<b><u>Known quirks</u>:</b><br>
-<bl>
-  <li>On Safari, ctrl+p and ctrl+d don't work.</li>
-  <li>On IE, ctrl+p works, but also makes a print dialog pop up.
-  <li>On IE, the canvas examples don't work.</li>
-</bl><br>
-<b><u>Acknowledgements</u>:</b>
-<bl>
-  <li>
-    the code for this user interface was adapted from Takashi Yamamiya's
-    <a href=http://metatoys.org/propella/js/workspace.cgi/Home>JavaScript Workspace</a>.
-  </li>
-  <li>
-    thanks to Dan Ingalls for suggesting the <tt>Turtle</tt> example.
-  </li>
-</bl>
-<br>
-To learn more about OMeta, click <a href=..>here</a>.<br>
--->
   </body>
-</html>
 
+</html>
