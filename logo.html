@@ -267,7 +267,7 @@ function autoexec() {
      Scheduler initialize [                                                                         \
        self                                                                                         \
          tasks: {};                                                                                 \
-         timeout: 20;                                                                               \
+         timeout: 10;                                                                               \
          tick;                                                                                      \
          yourself                                                                                   \
      ].                                                                                             \
@@ -302,11 +302,13 @@ function autoexec() {
            ctxt lineTo: self x : self y.                                                            \
            ctxt stroke.                                                                             \
          ].                                                                                         \
+         window printPositionAndAngle.                                                              \
        ]                                                                                            \
      ].                                                                                             \
      Turtle turnBy: n [                                                                             \
        theScheduler schedule: [                                                                     \
          self angle: self angle + (n * (Math at: #PI) / 180).                                       \
+         window printPositionAndAngle.                                                              \
        ]                                                                                            \
      ].                                                                                             \
      Turtle repeat: n : aBlock [                                                                    \
