@@ -168,6 +168,13 @@ function evalSource(source) {
   return resultObject;
 }
 
+function printPositionAndAngle(){
+  text = Math.round(smiley.x()) + ',';
+  text += Math.round(smiley.y()) + ',';
+  text += ((Math.round(smiley.angle()*180/Math.PI)%360)+360)%360;
+  document.getElementById('locationText').innerHTML = text;
+}
+
 // *** End of JavaScript Workspace code.
 // *****************************************************************************
 
@@ -353,6 +360,7 @@ function toggleVisible(id) {
     To make it go, select all of the code below and press the "do it" button.
     <br><br>-->
     <div id=playArea></div>
+    <p id='locationText'>200,200,0</p>
     <br></br>
     <form id=myForm>
 <!--
