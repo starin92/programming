@@ -32,6 +32,7 @@
     <script src="squeak-parser.js"></script>
     <script src="squeak-lib.js"></script>
     <script src="ometa-parser.js"></script>
+    <script src="canvas.js"></script>
     <script>
 
 // *****************************************************************************
@@ -130,7 +131,7 @@ function loadGrammar() {
 function evalSource(source) {
   //var source = getSource();
   setSource(source);
-  source = "smiley eval: '"+source+"'";
+  source = "turtle eval: '"+source+"'";
   var result;
   try {
     try { translation = OMetaSqueakParser.translate(source) }
@@ -169,34 +170,10 @@ function evalSource(source) {
 }
 
 function printPositionAndAngle(){
-  text = Math.round(smiley.x()) + ',';
-  text += Math.round(smiley.y()) + ',';
-  text += ((Math.round(smiley.angle()*180/Math.PI)%360)+360)%360;
+  text = Math.round(turtle.x()) + ',';
+  text += Math.round(turtle.y()) + ',';
+  text += ((Math.round(turtle.angle()*180/Math.PI)%360)+360)%360;
   document.getElementById('locationText').innerHTML = text;
-}
-
-function line2click(e){
-  context = this.getContext('2d');
-
-  var p = getCursorPosition(e);
-  mx = p[0] - this.offsetLeft;
-  my = p[1] - this.offsetTop;
-
-  dx = mx - smiley.x();
-  dy = my - smiley.y();
-
-  angleFinal = Math.atan2(dy,dx);
-  degreeTurn = Math.round( (angleFinal - smiley.angle())/Math.PI*180 );
-  disp = Math.round(Math.sqrt(dx*dx+dy*dy));
-
-  turnCmd = degreeTurn<0?'lt '+(-degreeTurn):'rt '+degreeTurn;
-
-  //console.log('rt '+degreeTurn+' fd '+disp);
-  evalSource(turnCmd+' fd '+disp);
-}
-
-function setUpCanvas(){
-  document.getElementById('canvas').addEventListener('click', line2click);
 }
 
 function getCursorPosition(e) {
@@ -214,6 +191,37 @@ function getCursorPosition(e) {
     return [x, y];
 }
 
+// ******************START TURTLE COMMANDS**************************
+function turtleForwardBy(n){        
+  var x1,y1,x2,y2;
+  var start = {};
+  var end = {};
+  start.x = turtle._state.x;
+  start.y = turtle._state.y;
+  end.x = start.x + n*Math.cos(turtle._state.angle);
+  end.y = start.y + n*Math.sin(turtle._state.angle);
+  turtle._state.x = end.x;
+  turtle._state.y = end.y;
+  if(turtle._state.penDown) canState.addLine(start,end);
+  canState.draw();
+  printPositionAndAngle();
+}            
+
+function turtleTurnBy(n){
+  turtle._state.angle += (n * Math.PI / 180);
+  canState.draw();
+  printPositionAndAngle();
+} 
+
+function turtleSetPen(writeBool){
+  turtle._state.penDown = writeBool;
+}
+
+function turtleClear(){
+  canState.clear();
+}
+// ******************END TURTLE COMMANDS**************************
+
 // *** End of JavaScript Workspace code.
 // *****************************************************************************
 
@@ -230,15 +238,7 @@ OMetaSqueakParser.eval      = function(s) { return eval(this.translate(s)) }
 
 function autoexec() {
   OMetaSqueakParser.eval(
-    "canvas := document createElement: 'canvas'.                                                    \
-     canvas setAttribute: 'width'  : '400'.                                                         \
-     canvas setAttribute: 'height' : '400'.                                                         \
-	   canvas setAttribute: 'style' : 'border:1px solid #000000;'.                                    \
-     canvas setAttribute: 'id' : 'canvas'.                                                          \
-     (document getElementById: 'playArea') appendChild: canvas.                                     \
-     ctxt := canvas getContext: '2d'.                                                               \
-                                                                                                    \
-     ometa MDefSqueakParser : SqueakParser {                                                        \
+     "ometa MDefSqueakParser : SqueakParser {                                                        \
        unaryMsgPat       ::= <identifier>:m                        => [{{$'. m. $'}. {}}].          \
        binaryMsgPat      ::= <binary>:m  <identifier>:a            => [{m squish join: ''. {a}}].   \
        keywordMsgPatPart ::= <keyword>:k <identifier>:a            => [{k. a}].                     \
@@ -264,24 +264,7 @@ function autoexec() {
      }.                                                                                             \
      SqueakParser := NewSqueakParser.                                                               ")
   OMetaSqueakParser.eval(
-    "Scheduler := SqueakObject subclassWithFields: 'tasks timeout'.                                 \
-     Scheduler initialize [                                                                         \
-       self                                                                                         \
-         tasks: {};                                                                                 \
-         timeout: 10;                                                                               \
-         tick;                                                                                      \
-         yourself                                                                                   \
-     ].                                                                                             \
-     Scheduler schedule: aTask [                                                                    \
-       self tasks addLast: aTask                                                                    \
-     ].                                                                                             \
-     Scheduler tick [                                                                               \
-       self tasks notEmpty ifTrue: [self tasks removeFirst value].                                  \
-       window setTimeout: [self tick] : self timeout                                                \
-     ].                                                                                             \
-     theScheduler := Scheduler new.                                                                 \
-                                                                                                    \
-     Turtle := SqueakObject subclassWithFields: 'x y angle color penDown'.                          \
+     "Turtle := SqueakObject subclassWithFields: 'x y angle color penDown'.                         \
      Turtle initialize [                                                                            \
        self                                                                                         \
          x: 200;                                                                                    \
@@ -290,49 +273,18 @@ function autoexec() {
          color: 'black';                                                                            \
          penDown: true                                                                              \
      ].                                                                                             \
-     Turtle forwardBy: n [                                                                          \
-       theScheduler schedule: [                                                                     \
-         self penDown ifTrue: [                                                                     \
-           ctxt at: #strokeStyle put: self color.                                                   \
-           ctxt beginPath.                                                                          \
-           ctxt moveTo: self x : self y.                                                            \
-         ].                                                                                         \
-         self x: self x + (n * (Math cos: self angle)).                                             \
-         self y: self y + (n * (Math sin: self angle)).                                             \
-         self penDown ifTrue: [                                                                     \
-           ctxt lineTo: self x : self y.                                                            \
-           ctxt stroke.                                                                             \
-         ].                                                                                         \
-         window printPositionAndAngle.                                                              \
-       ]                                                                                            \
-     ].                                                                                             \
-     Turtle turnBy: n [                                                                             \
-       theScheduler schedule: [                                                                     \
-         self angle: self angle + (n * (Math at: #PI) / 180).                                       \
-         window printPositionAndAngle.                                                              \
-       ]                                                                                            \
-     ].                                                                                             \
      Turtle repeat: n : aBlock [                                                                    \
-       theScheduler schedule: [                                                                     \
-         n timesRepeat: aBlock                                                                      \
-       ].                                                                                           \
-     ].                                                                                             \
-     Turtle setPenDown: aBoolean [                                                                  \
-       theScheduler schedule: [                                                                     \
-         self penDown: aBoolean                                                                     \
-       ]                                                                                            \
+      n timesRepeat: aBlock                                                                      \
      ].                                                                                             \
      Turtle clear [                                                                                 \
-       theScheduler schedule: [                                                                     \
-         ctxt clearRect: 0 : 0 : (canvas at: #width) : (canvas at: #height)                         \
-       ]                                                                                            \
+      window turtleClear.                                                                           \
      ]                                                                                              ")
 }
     </script>
   </head>
 
 
-  <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; console.log('Auto Exec Setup...'); autoexec(); console.log('Loading Grammar...'); loadGrammar(); setUpCanvas(); console.log('Done');">
+  <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; console.log('Auto Exec Setup...'); autoexec(); console.log('Loading Grammar...'); loadGrammar(); console.log('Setting Up Canvas...'); canState = setUpCanvas(); console.log('Done');">
     <div id=playArea></div>
       <p id='locationText'>200,200,0</p>
       <br></br>
@@ -362,12 +314,12 @@ spiral 0 89
 	    </textarea>
 
       <textarea cols=0 rows=0 id=grammar style='display:none'>
-Turtle rt: n [self turnBy: n].
-Turtle lt: n [self turnBy: n negated].
-Turtle fd: n [self forwardBy: n].
-Turtle bk: n [self forwardBy: n negated].
-Turtle pu    [self setPenDown: false].
-Turtle pd    [self setPenDown: true].
+Turtle rt: n [window turtleTurnBy: n].
+Turtle lt: n [window turtleTurnBy: n negated].
+Turtle fd: n [window turtleForwardBy: n].
+Turtle bk: n [window turtleForwardBy: n negated].
+Turtle pu    [window turtleSetPen: false].
+Turtle pd    [window turtleSetPen: true].
 
 ometa LogoTranslator : Parser {
   name         ::= <spaces> <firstAndRest #letter #letterOrDigit>:xs => [xs squish join: ''].
@@ -417,7 +369,7 @@ Turtle if: cond : aBlock [
   cond ifTrue: aBlock
 ].
 
-smiley := Turtle new.
+turtle := Turtle new.
 
       </textarea><br>
       <!-- <input type=button value="print it (ctrl+p)" onClick="printIt()"> -->
