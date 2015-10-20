@@ -1,13 +1,10 @@
-function line(start,end){
-	this.start = start;
-	this.end = end;
-}
-
 function canvasState(htmlCanvas){
 	this.canvas = htmlCanvas;
 	this.ctxt = htmlCanvas.getContext('2d');
 	this.lines = [];
-	this.drawTurtle();
+	this.challenge = new challenge([new path([200,200],0,100)]);
+	//this.challenge = new challenge([new path([200,200],90,100),new path([200,300],0,100)]);
+	this.draw();
 }
 
 canvasState.prototype.drawTurtle = function(){
@@ -31,7 +28,9 @@ canvasState.prototype.drawTurtle = function(){
 canvasState.prototype.draw = function(){
 	this.ctxt.clearRect(0,0,this.canvas.width,this.canvas.height);
 
-	for(var i=0;i<this.lines.length;i+=1){
+	this.challenge.draw(this);
+
+	for(var i=0;i<this.lines.length;i++){
 		this.ctxt.beginPath();
 		this.ctxt.moveTo(this.lines[i][0].x,this.lines[i][0].y);
 		this.ctxt.lineTo(this.lines[i][1].x,this.lines[i][1].y);
@@ -88,4 +87,37 @@ function line2click(e){
   evalSource(turnCmd+' fd '+disp);
 }
 
-//setUpCanvas();
+function path(start,angle,mag){
+	this.start=start;
+	this.angle=angle;
+	this.mag=mag;
+}
+
+function challenge(paths){
+	this.paths = paths;
+	this.solved = false;
+}
+
+challenge.prototype.draw = function(cs){
+	var start;
+	var angle;
+	var mag;
+	var dx,dy;
+	for(var i=0;i<this.paths.length;i++){
+		start=this.paths[i].start;
+		angle=this.paths[i].angle*Math.PI/180;
+		mag=this.paths[i].mag;
+		dx=Math.cos(angle);
+		dy=Math.sin(angle);
+
+		cs.ctxt.fillStyle='#00BFFF';
+		for(var x=start[0], y=start[1], m=0;m<mag;m++){
+			cs.ctxt.beginPath();
+			cs.ctxt.arc(x,y,5,0,2*Math.PI);
+			cs.ctxt.fill();
+			x+=dx;
+			y+=dy;
+		}
+		cs.ctxt.fillStyle='#000000';
+	}
+}
