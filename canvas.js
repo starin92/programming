@@ -2,8 +2,9 @@ function canvasState(htmlCanvas){
 	this.canvas = htmlCanvas;
 	this.ctxt = htmlCanvas.getContext('2d');
 	this.lines = [];
-	this.challenge = new challenge([new path([200,200],0,100)]);
-	//this.challenge = new challenge([new path([200,200],90,100),new path([200,300],0,100)]);
+	this.points = [];
+	//this.challenge = new challenge([new path([200,200],0,100)]);
+	this.challenge = new challenge([new path([200,200],90,100),new path([200,300],0,100)]);
 	this.draw();
 }
 
@@ -28,6 +29,8 @@ canvasState.prototype.drawTurtle = function(){
 canvasState.prototype.draw = function(){
 	this.ctxt.clearRect(0,0,this.canvas.width,this.canvas.height);
 
+	//TODO: may want to move the checkSovled fxn call
+	this.challenge.checkSolved(this);
 	this.challenge.draw(this);
 
 	for(var i=0;i<this.lines.length;i++){
@@ -42,6 +45,19 @@ canvasState.prototype.draw = function(){
 
 canvasState.prototype.addLine = function(startPos,endPos){
 	this.lines.push([startPos,endPos]);
+
+	dx = endPos.x - startPos.x;
+	dy = endPos.y - startPos.y;
+	angle = Math.atan2(dy,dx);
+	disp = Math.sqrt(dx*dx+dy*dy);
+	sx = Math.cos(angle);
+	sy = Math.sin(angle);
+
+	for(var d=0,x=startPos.x,y=startPos.y;d<disp;d++){
+		this.points.push({x:x,y:y});
+		x+=sx;
+		y+=sy;
+	}
 }
 
 canvasState.prototype.clear = function(){
@@ -96,13 +112,7 @@ function path(start,angle,mag){
 function challenge(paths){
 	this.paths = paths;
 	this.solved = false;
-}
-
-challenge.prototype.draw = function(cs){
-	var start;
-	var angle;
-	var mag;
-	var dx,dy;
+	this.points = [];
 	for(var i=0;i<this.paths.length;i++){
 		start=this.paths[i].start;
 		angle=this.paths[i].angle*Math.PI/180;
@@ -110,14 +120,47 @@ challenge.prototype.draw = function(cs){
 		dx=Math.cos(angle);
 		dy=Math.sin(angle);
 
-		cs.ctxt.fillStyle='#00BFFF';
 		for(var x=start[0], y=start[1], m=0;m<mag;m++){
-			cs.ctxt.beginPath();
-			cs.ctxt.arc(x,y,5,0,2*Math.PI);
-			cs.ctxt.fill();
+			this.points.push({x:x,y:y});
 			x+=dx;
 			y+=dy;
 		}
-		cs.ctxt.fillStyle='#000000';
 	}
+}
+
+challenge.prototype.draw = function(cs){
+	var start;
+	var angle;
+	var mag;
+	var dx,dy;
+	
+	cs.ctxt.fillStyle=this.solved?'#FFFF66':'#00BFFF';
+	for(var i=0;i<this.points.length;i++){
+		cs.ctxt.beginPath();
+		cs.ctxt.arc(this.points[i].x,this.points[i].y,5,0,2*Math.PI);
+		cs.ctxt.fill();
+	}
+	cs.ctxt.fillStyle='#000000';
+}
+
+challenge.prototype.checkSolved = function(cs){
+	if(this.solved) return;
+
+	for(var i=0;i<this.points.length;i++){
+		var p1 = this.points[i];
+		for(var j=0;j<cs.points.length;j++){
+			if(distBetween(p1,cs.points[j])<=5){
+				break;
+			}
+		}
+		if(j==cs.points.length) return;
+	}
+	this.solved = true;
+	return;
+}
+
+function distBetween(p1,p2){
+	dx=p1.x-p2.x;
+	dy=p1.y-p2.y;
+	return Math.sqrt(dx*dx+dy*dy);
 }
