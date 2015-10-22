@@ -32,6 +32,7 @@
     <script src="squeak-parser.js"></script>
     <script src="squeak-lib.js"></script>
     <script src="ometa-parser.js"></script>
+    <script src="challenges.js"></script>
     <script src="canvas.js"></script>
     <script>
 
@@ -287,7 +288,6 @@ function autoexec() {
   <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; console.log('Auto Exec Setup...'); autoexec(); console.log('Loading Grammar...'); loadGrammar(); console.log('Setting Up Canvas...'); canState = setUpCanvas(); console.log('Done');">
     <div id=playArea></div>
       <p id='locationText'>200,200,0</p>
-      <br></br>
       <form id=myForm>
 
       <input type=button value="line" onClick="evalSource('fd 10')">
@@ -376,6 +376,13 @@ turtle := Turtle new.
       <input type=button value="do it (ctrl+d)" onClick="doIt()">
       <br><br>
     </form>
+
+    <input type=button value="Challenge 0" onClick="canState.changeChallenge(0)">
+    <input type=button value="Challenge 1" onClick="canState.changeChallenge(1)">
+    <input type=button value="Challenge 2" onClick="canState.changeChallenge(2)">
+    <input type=button value="Challenge 3" onClick="canState.changeChallenge(3)">
+    <input type=button value="Challenge 4" onClick="canState.changeChallenge(4)">
+    <input type=button value="Challenge 5" onClick="canState.changeChallenge(5)">
   </body>
 
 </html>

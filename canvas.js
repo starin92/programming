@@ -3,8 +3,9 @@ function canvasState(htmlCanvas){
 	this.ctxt = htmlCanvas.getContext('2d');
 	this.lines = [];
 	this.points = [];
-	//this.challenge = new challenge([new path([200,200],0,100)]);
-	this.challenge = new challenge([new path([200,200],90,100),new path([200,300],0,100)]);
+
+	this.challengesObj = new challenges();
+
 	this.draw();
 }
 
@@ -30,8 +31,8 @@ canvasState.prototype.draw = function(){
 	this.ctxt.clearRect(0,0,this.canvas.width,this.canvas.height);
 
 	//TODO: may want to move the checkSovled fxn call
-	this.challenge.checkSolved(this);
-	this.challenge.draw(this);
+	this.challengesObj.checkSolved(this);
+	this.challengesObj.draw(this);
 
 	for(var i=0;i<this.lines.length;i++){
 		this.ctxt.beginPath();
@@ -63,7 +64,12 @@ canvasState.prototype.addLine = function(startPos,endPos){
 canvasState.prototype.clear = function(){
 	this.lines = [];
 	this.ctxt.clearRect(0,0,this.canvas.width,this.canvas.height);
-	this.drawTurtle();
+	this.draw();
+}
+
+canvasState.prototype.changeChallenge = function(i){
+	this.challengesObj.setChallenge(i);
+	this.draw();
 }
 
 function setUpCanvas(){
@@ -101,66 +107,4 @@ function line2click(e){
 
   //console.log('rt '+degreeTurn+' fd '+disp);
   evalSource(turnCmd+' fd '+disp);
-}
-
-function path(start,angle,mag){
-	this.start=start;
-	this.angle=angle;
-	this.mag=mag;
-}
-
-function challenge(paths){
-	this.paths = paths;
-	this.solved = false;
-	this.points = [];
-	for(var i=0;i<this.paths.length;i++){
-		start=this.paths[i].start;
-		angle=this.paths[i].angle*Math.PI/180;
-		mag=this.paths[i].mag;
-		dx=Math.cos(angle);
-		dy=Math.sin(angle);
-
-		for(var x=start[0], y=start[1], m=0;m<mag;m++){
-			this.points.push({x:x,y:y});
-			x+=dx;
-			y+=dy;
-		}
-	}
-}
-
-challenge.prototype.draw = function(cs){
-	var start;
-	var angle;
-	var mag;
-	var dx,dy;
-	
-	cs.ctxt.fillStyle=this.solved?'#FFFF66':'#00BFFF';
-	for(var i=0;i<this.points.length;i++){
-		cs.ctxt.beginPath();
-		cs.ctxt.arc(this.points[i].x,this.points[i].y,5,0,2*Math.PI);
-		cs.ctxt.fill();
-	}
-	cs.ctxt.fillStyle='#000000';
-}
-
-challenge.prototype.checkSolved = function(cs){
-	if(this.solved) return;
-
-	for(var i=0;i<this.points.length;i++){
-		var p1 = this.points[i];
-		for(var j=0;j<cs.points.length;j++){
-			if(distBetween(p1,cs.points[j])<=5){
-				break;
-			}
-		}
-		if(j==cs.points.length) return;
-	}
-	this.solved = true;
-	return;
-}
-
-function distBetween(p1,p2){
-	dx=p1.x-p2.x;
-	dy=p1.y-p2.y;
-	return Math.sqrt(dx*dx+dy*dy);
 }
