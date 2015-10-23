@@ -40,6 +40,9 @@
 // *** The code below was adapted from Takashi Yamamiya's Javascript Workspace,
 // *** http://metatoys.org/propella/js/workspace.js
 
+var RECORDING=false;
+var MYFUNDEFINED=false;
+
 /* event handler for short cut key */
 function onShortCutKey(evt)
 {
@@ -93,7 +96,11 @@ function getGrammar() {
 }
 
 function setSource(str) {
-  workspace.value = str;
+  if(RECORDING){
+    workspace.value += str + '\n';
+  }else{
+    workspace.value = str;
+  }
 }
 
 /* Get expression from textarea */
@@ -190,6 +197,30 @@ function getCursorPosition(e) {
     }
     
     return [x, y];
+}
+
+function recordClick(){
+  var rb = document.getElementById('recordButton')
+  if(!RECORDING){
+    setSource('to myFunction\n');
+    RECORDING=true;
+    rb.value = 'stop';
+
+  }else{
+    setSource('end');
+    RECORDING=false;
+    MYFUNDEFINED=true;
+    rb.value = 'record';
+    doIt();
+  }
+}
+
+function playClick(){
+  if(MYFUNDEFINED){
+    evalSource('myFunction');
+  }else{
+    alert('Error: You must record a funciton before pressing play');
+  }
 }
 
 // ******************START TURTLE COMMANDS**************************
@@ -309,10 +340,13 @@ function autoexec() {
       <input type=button value="pen up" onClick="evalSource('pu')">
       <input type=button value="pen down" onClick="evalSource('pd')">
       <input type=button value="clear" onClick="evalSource('clear')">
+      <br>
+      <input type=button id='recordButton' value="record" onClick="recordClick()">
+      <input type=button value="play" onClick="evalSource('myFunction')">
 
       <br>
 
-      <br><br>
+      <br>
 
       <textarea cols=132 rows=10 name=source>
 to spiral :size :angle
