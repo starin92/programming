@@ -36,8 +36,8 @@ canvasState.prototype.draw = function(){
 
 	for(var i=0;i<this.lines.length;i++){
 		this.ctxt.beginPath();
-		this.ctxt.moveTo(this.lines[i][0].x,this.lines[i][0].y);
-		this.ctxt.lineTo(this.lines[i][1].x,this.lines[i][1].y);
+		this.ctxt.moveTo(this.lines[i][0][0],this.lines[i][0][1]);
+		this.ctxt.lineTo(this.lines[i][1][0],this.lines[i][1][1]);
 		this.ctxt.stroke();
 	}
 
@@ -47,15 +47,12 @@ canvasState.prototype.draw = function(){
 canvasState.prototype.addLine = function(startPos,endPos){
 	this.lines.push([startPos,endPos]);
 
-	dx = endPos.x - startPos.x;
-	dy = endPos.y - startPos.y;
-	angle = Math.atan2(dy,dx);
-	disp = Math.sqrt(dx*dx+dy*dy);
-	sx = Math.cos(angle);
-	sy = Math.sin(angle);
+	var vec = xy2vec(startPos[0],startPos[1],endPos[0],endPos[1]);
+	sx = Math.cos(vec.angle);
+	sy = Math.sin(vec.angle);
 
-	for(var d=0,x=startPos.x,y=startPos.y;d<disp;d++){
-		this.points.push({x:x,y:y});
+	for(var d=0,x=startPos[0],y=startPos[1];d<vec.mag;d++){
+		this.points.push([x,y]);
 		x+=sx;
 		y+=sy;
 	}
@@ -96,15 +93,23 @@ function line2click(e){
   mx = p[0] - this.offsetLeft;
   my = p[1] - this.offsetTop;
 
-  dx = mx - turtle.x();
-  dy = my - turtle.y();
+  var vec=xy2vec(turtle.x(),turtle.y(),mx,my);
 
-  angleFinal = Math.atan2(dy,dx);
-  degreeTurn = Math.round( (angleFinal - turtle.angle())/Math.PI*180 );
-  disp = Math.round(Math.sqrt(dx*dx+dy*dy));
+  degreeTurn = Math.round( (vec.angle - turtle.angle())/Math.PI*180 );
+  disp = Math.round(vec.mag);
 
   turnCmd = degreeTurn<0?'lt '+(-degreeTurn):'rt '+degreeTurn;
 
   //console.log('rt '+degreeTurn+' fd '+disp);
-  evalSource(turnCmd+' fd '+disp);
+  evalSource(turnCmd+' fd '+ disp);
+}
+
+function xy2vec(x1,y1,x2,y2){
+	var dx,dy;
+	dx = x2-x1;
+	dy = y2-y1;
+	var result = {};
+	result.angle = Math.atan2(dy,dx);
+	result.mag = Math.sqrt(dx*dx+dy*dy);
+	return result;
 }

@@ -195,14 +195,14 @@ function getCursorPosition(e) {
 // ******************START TURTLE COMMANDS**************************
 function turtleForwardBy(n){        
   var x1,y1,x2,y2;
-  var start = {};
-  var end = {};
-  start.x = turtle._state.x;
-  start.y = turtle._state.y;
-  end.x = start.x + n*Math.cos(turtle._state.angle);
-  end.y = start.y + n*Math.sin(turtle._state.angle);
-  turtle._state.x = end.x;
-  turtle._state.y = end.y;
+  var start = [];
+  var end = [];
+  start[0] = turtle._state.x;
+  start[1] = turtle._state.y;
+  end[0] = start[0] + n*Math.cos(turtle._state.angle);
+  end[1] = start[1] + n*Math.sin(turtle._state.angle);
+  turtle._state.x = end[0];
+  turtle._state.y = end[1];
   if(turtle._state.penDown) canState.addLine(start,end);
   canState.draw();
   printPositionAndAngle();
@@ -286,11 +286,24 @@ function autoexec() {
 
 
   <body onLoad="form = document.getElementById('myForm'); workspace = form.source; workspace.onkeydown = onShortCutKey; console.log('Auto Exec Setup...'); autoexec(); console.log('Loading Grammar...'); loadGrammar(); console.log('Setting Up Canvas...'); canState = setUpCanvas(); console.log('Done');">
+    <input type=button value="Challenge 0" onClick="canState.changeChallenge(0)">
+    <input type=button value="Challenge 1" onClick="canState.changeChallenge(1)">
+    <input type=button value="Challenge 2" onClick="canState.changeChallenge(2)">
+    <input type=button value="Challenge 3" onClick="canState.changeChallenge(3)">
+    <input type=button value="Challenge 4" onClick="canState.changeChallenge(4)">
+    <input type=button value="Challenge 5" onClick="canState.changeChallenge(5)">
+    <input type=button value="Challenge 6" onClick="canState.changeChallenge(6)">
+    <input type=button value="Challenge 7" onClick="canState.changeChallenge(7)">
+    <input type=button value="Challenge 8" onClick="canState.changeChallenge(8)">
+    <input type=button value="Challenge 9" onClick="canState.changeChallenge(9)">
+    <input type=button value="Challenge 10" onClick="canState.changeChallenge(10)">
+    <!--<input type=button value="Challenge 11" onClick="canState.changeChallenge(11)">-->
     <div id=playArea></div>
       <p id='locationText'>200,200,0</p>
       <form id=myForm>
 
-      <input type=button value="line" onClick="evalSource('fd 10')">
+      <input type=button value="forward" onClick="evalSource('fd 10')">
+      <input type=button value="backward" onClick="evalSource('bk 10')">
       <input type=button value="rotate right" onClick="evalSource('rt 5')">
       <input type=button value="rotate left" onClick="evalSource('lt 5')">
       <input type=button value="pen up" onClick="evalSource('pu')">
@@ -377,12 +390,7 @@ turtle := Turtle new.
       <br><br>
     </form>
 
-    <input type=button value="Challenge 0" onClick="canState.changeChallenge(0)">
-    <input type=button value="Challenge 1" onClick="canState.changeChallenge(1)">
-    <input type=button value="Challenge 2" onClick="canState.changeChallenge(2)">
-    <input type=button value="Challenge 3" onClick="canState.changeChallenge(3)">
-    <input type=button value="Challenge 4" onClick="canState.changeChallenge(4)">
-    <input type=button value="Challenge 5" onClick="canState.changeChallenge(5)">
+
   </body>
 
 </html>
