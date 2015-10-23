@@ -40,6 +40,7 @@
 // *** The code below was adapted from Takashi Yamamiya's Javascript Workspace,
 // *** http://metatoys.org/propella/js/workspace.js
 
+var REPEAT=false;
 var RECORDING=false;
 var MYFUNDEFINED=false;
 
@@ -138,6 +139,18 @@ function loadGrammar() {
 
 function evalSource(source) {
   //var source = getSource();
+  if(REPEAT){
+    REPEAT=false;
+    var n = prompt("How many times should that repeat?", "2");
+    
+    if (n != null) {
+      if(/^[1-9]\d*$/.test(n)){}
+        source = "repeat " + n + " [ " + source + " ]";
+      }else{
+        alert('input '+n+'must be a positive number');
+      }    
+  }
+
   setSource(source);
   source = "turtle eval: '"+source+"'";
   var result;
@@ -197,6 +210,14 @@ function getCursorPosition(e) {
     }
     
     return [x, y];
+}
+
+function repeatClick(){
+  if(!REPEAT){
+    REPEAT=true;
+  }else{
+    REPEAT=false;
+  }
 }
 
 function recordClick(){
@@ -341,7 +362,9 @@ function autoexec() {
       <input type=button value="pen down" onClick="evalSource('pd')">
       <input type=button value="clear" onClick="evalSource('clear')">
       <br>
-      <input type=button id='recordButton' value="record" onClick="recordClick()">
+      <input type=button value="repeat" onClick="repeatClick()">
+      <br>
+      <input type=button id="recordButton" value="record" onClick="recordClick()">
       <input type=button value="play" onClick="evalSource('myFunction')">
 
       <br>
