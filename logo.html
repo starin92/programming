@@ -223,7 +223,7 @@ function repeatClick(){
 function recordClick(){
   var rb = document.getElementById('recordButton')
   if(!RECORDING){
-    setSource('to myFunction\n');
+    setSource('to function1\n');
     RECORDING=true;
     rb.value = 'stop';
 
@@ -238,10 +238,14 @@ function recordClick(){
 
 function playClick(){
   if(MYFUNDEFINED){
-    evalSource('myFunction');
+    evalSource('function1');
   }else{
     alert('Error: You must record a funciton before pressing play');
   }
+}
+
+function previewCode(source){
+  //console.log('code to preview:'+source);
 }
 
 // ******************START TURTLE COMMANDS**************************
@@ -271,7 +275,11 @@ function turtleSetPen(writeBool){
 }
 
 function turtleClear(){
+  turtle.x(200);
+  turtle.y(200);
+  turtle.angle(0);
   canState.clear();
+  canState.draw();
 }
 // ******************END TURTLE COMMANDS**************************
 
@@ -329,7 +337,7 @@ function autoexec() {
      Turtle repeat: n : aBlock [                                                                    \
       n timesRepeat: aBlock                                                                      \
      ].                                                                                             \
-     Turtle clear [                                                                                 \
+     Turtle clearscreen [                                                                                 \
       window turtleClear.                                                                           \
      ]                                                                                              ")
 }
@@ -360,18 +368,18 @@ function autoexec() {
       <input type=button value="rotate left" onClick="evalSource('lt 5')">
       <input type=button value="pen up" onClick="evalSource('pu')">
       <input type=button value="pen down" onClick="evalSource('pd')">
-      <input type=button value="clear" onClick="evalSource('clear')">
+      <input type=button value="clear screen" onClick="evalSource('clearscreen')">
       <br>
       <input type=button value="repeat" onClick="repeatClick()">
       <br>
       <input type=button id="recordButton" value="record" onClick="recordClick()">
-      <input type=button value="play" onClick="evalSource('myFunction')">
+      <input type=button value="play" onClick="evalSource('function1')">
 
       <br>
 
       <br>
 
-      <textarea cols=132 rows=10 name=source>
+      <textarea cols=132 rows=10 name=source onchange="previewCode(this.value)" onkeyup="previewCode(this.value)">
 to spiral :size :angle
 if :size < 100 [
   fd :size
