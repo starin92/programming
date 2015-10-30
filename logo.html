@@ -187,6 +187,9 @@ function evalSource(source) {
     source: source,
     result: result
   };
+
+  previewCode(workspace.value);
+
   return resultObject;
 }
 
@@ -244,43 +247,113 @@ function playClick(){
   }
 }
 
+function previewCBchange(){
+  if(document.getElementById('previewingCheckbox').checked){
+    previewCode(workspace.value);
+  }else{
+    resetPreview();
+  }
+}
+
+function resetPreview(){
+  canState.clearPreview();
+  previewTurtle.x(turtle.x());
+  previewTurtle.y(turtle.y());
+  previewTurtle.angle(turtle.angle());
+  canState.draw();
+}
+
 function previewCode(source){
-  //console.log('code to preview:'+source);
+  if(document.getElementById("previewingCheckbox").checked){
+    resetPreview();
+    //console.log('code to preview:'+source);
+
+    source = "previewTurtle eval: '"+source+"'";
+    var result;
+    try {
+      try { translation = OMetaSqueakParser.translate(source) }
+      catch (e) {
+        if (e instanceof Fail) {
+          //console.log('Parse error in input at:'+e.matcher.input.realPos())
+          //var failPos      = source.start + e.matcher.input.realPos() - 1,
+          //    errorMsg     = " Parse error ->",
+          //    oldScrollTop = form.source.scrollTop
+          //form.source.value = form.source.value.substring(0, failPos) + errorMsg +
+          //                    form.source.value.substring(failPos, form.source.value.length)
+          //form.source.scrollTop = oldScrollTop
+          //setCaretSelection(form.source, failPos, failPos + errorMsg.length)
+          e = new ParseError()
+        }
+        //throw e
+      }
+      result = eval(translation)
+    }
+    catch (e) {
+      if (!(e instanceof ParseError)) {
+        if (e instanceof Fail)
+          ;
+          //console.log(e)
+        else
+          ;
+          //console.log("uncaught exception: " + e)
+      }
+      //throw e
+    }
+    result = [" ", printString(result)].squish().join('')
+    
+    resultObject = {
+      source: source,
+      result: result
+    };
+    return resultObject;
+  }
 }
 
 // ******************START TURTLE COMMANDS**************************
-function turtleForwardBy(n){        
+function turtleForwardBy(turtleObj,n){        
   var x1,y1,x2,y2;
   var start = [];
   var end = [];
-  start[0] = turtle._state.x;
-  start[1] = turtle._state.y;
-  end[0] = start[0] + n*Math.cos(turtle._state.angle);
-  end[1] = start[1] + n*Math.sin(turtle._state.angle);
-  turtle._state.x = end[0];
-  turtle._state.y = end[1];
-  if(turtle._state.penDown) canState.addLine(start,end);
+  start[0] = turtleObj._state.x;
+  start[1] = turtleObj._state.y;
+  end[0] = start[0] + n*Math.cos(turtleObj._state.angle);
+  end[1] = start[1] + n*Math.sin(turtleObj._state.angle);
+  turtleObj._state.x = end[0];
+  turtleObj._state.y = end[1];
+
+  if(turtleObj._state.penDown){
+    if(!turtleObj.isPreview()){
+      canState.addLine(start,end);
+    }else{
+      canState.addPreviewLine(start,end);
+    }
+  }
   canState.draw();
+
   printPositionAndAngle();
 }            
 
-function turtleTurnBy(n){
-  turtle._state.angle += (n * Math.PI / 180);
+function turtleTurnBy(turtleObj,n){
+  turtleObj._state.angle += (n * Math.PI / 180);
   canState.draw();
   printPositionAndAngle();
 } 
 
-function turtleSetPen(writeBool){
-  turtle._state.penDown = writeBool;
+function turtleSetPen(turtleObj,writeBool){
+  turtleObj._state.penDown = writeBool;
 }
 
-function turtleClear(){
-  turtle.x(200);
-  turtle.y(200);
-  turtle.angle(0);
-  canState.clear();
-  canState.draw();
+function turtleClear(turtleObj){
+  turtleObj.x(200);
+  turtleObj.y(200);
+  turtleObj.angle(0);
+  if(!turtleObj.isPreview()){
+    canState.clear();
+  }else{
+    canState.clearPreview();
+  }
 }
+
 // ******************END TURTLE COMMANDS**************************
 
 // *** End of JavaScript Workspace code.
@@ -325,20 +398,20 @@ function autoexec() {
      }.                                                                                             \
      SqueakParser := NewSqueakParser.                                                               ")
   OMetaSqueakParser.eval(
-     "Turtle := SqueakObject subclassWithFields: 'x y angle color penDown'.                         \
+     "Turtle := SqueakObject subclassWithFields: 'x y angle isPreview penDown'.                     \
      Turtle initialize [                                                                            \
        self                                                                                         \
          x: 200;                                                                                    \
          y: 200;                                                                                    \
          angle: 0;                                                                                  \
-         color: 'black';                                                                            \
+         isPreview: false;                                                                          \
          penDown: true                                                                              \
      ].                                                                                             \
      Turtle repeat: n : aBlock [                                                                    \
-      n timesRepeat: aBlock                                                                      \
+      n timesRepeat: aBlock                                                                         \
      ].                                                                                             \
-     Turtle clearscreen [                                                                                 \
-      window turtleClear.                                                                           \
+     Turtle clearscreen [                                                                           \
+      window turtleClear: self yourself.                                                            \
      ]                                                                                              ")
 }
     </script>
@@ -392,12 +465,12 @@ spiral 0 89
 	    </textarea>
 
       <textarea cols=0 rows=0 id=grammar style='display:none'>
-Turtle rt: n [window turtleTurnBy: n].
-Turtle lt: n [window turtleTurnBy: n negated].
-Turtle fd: n [window turtleForwardBy: n].
-Turtle bk: n [window turtleForwardBy: n negated].
-Turtle pu    [window turtleSetPen: false].
-Turtle pd    [window turtleSetPen: true].
+Turtle rt: n [window turtleTurnBy: self yourself : n].
+Turtle lt: n [window turtleTurnBy: self yourself : n negated].
+Turtle fd: n [window turtleForwardBy: self yourself : n].
+Turtle bk: n [window turtleForwardBy: self yourself : n negated].
+Turtle pu    [window turtleSetPen: self yourself : false].
+Turtle pd    [window turtleSetPen: self yourself : true].
 
 ometa LogoTranslator : Parser {
   name         ::= <spaces> <firstAndRest #letter #letterOrDigit>:xs => [xs squish join: ''].
@@ -448,9 +521,12 @@ Turtle if: cond : aBlock [
 ].
 
 turtle := Turtle new.
+previewTurtle := Turtle new.
+previewTurtle isPreview: true.
 
       </textarea><br>
       <!-- <input type=button value="print it (ctrl+p)" onClick="printIt()"> -->
+      <input type="checkbox" id="previewingCheckbox" checked="true" onchange="previewCBchange()">Preview Code<br>
       <input type=button value="do it (ctrl+d)" onClick="doIt()">
       <br><br>
     </form>
