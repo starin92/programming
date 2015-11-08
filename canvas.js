@@ -1,8 +1,8 @@
-function canvasState(htmlCanvas){
+function CanvasState(htmlCanvas,turtle,previewTurtle){
 	this.canvas = htmlCanvas;
 	this.ctxt = htmlCanvas.getContext('2d');
-	this.lines = [];
-	this.previewLines = [];
+	this.turtle = turtle;
+	this.previewTurtle = previewTurtle; 
 	this.points = [];
 
 	this.challengesObj = new challenges();
@@ -10,11 +10,11 @@ function canvasState(htmlCanvas){
 	this.draw();
 }
 
-canvasState.prototype.drawTurtle = function(turtleObj){
+CanvasState.prototype.drawTurtle = function(turtleObj){
 	var x = turtleObj.x();
 	var y = turtleObj.y();
 	var angle = turtleObj.angle();
-	this.ctxt.fillStyle=turtleObj.isPreview()?"#999999":"#000000";
+	this.ctxt.fillStyle=turtleObj.isPreview?"#999999":"#000000";
 	
 	this.ctxt.beginPath();
 	xdisp = Math.cos(angle)*5;
@@ -29,7 +29,7 @@ canvasState.prototype.drawTurtle = function(turtleObj){
 	this.ctxt.fill();
 }
 
-canvasState.prototype.draw = function(){
+CanvasState.prototype.draw = function(){
 	this.ctxt.clearRect(0,0,this.canvas.width,this.canvas.height);
 
 	//TODO: may want to move the checkSovled fxn call
@@ -37,27 +37,27 @@ canvasState.prototype.draw = function(){
 	this.challengesObj.draw(this);
 
 	this.ctxt.strokeStyle = "#999999";
-	for(var i=0;i<this.previewLines.length;i++){
+	for(var i=0;i<this.previewTurtle.lines.length;i++){
 		this.ctxt.beginPath();
-		this.ctxt.moveTo(this.previewLines[i][0][0],this.previewLines[i][0][1]);
-		this.ctxt.lineTo(this.previewLines[i][1][0],this.previewLines[i][1][1]);
+		this.ctxt.moveTo(this.previewTurtle.lines[i][0][0],this.previewTurtle.lines[i][0][1]);
+		this.ctxt.lineTo(this.previewTurtle.lines[i][1][0],this.previewTurtle.lines[i][1][1]);
 		this.ctxt.stroke();
 	}
 
 	this.ctxt.strokeStyle = "#000000";
-	for(var i=0;i<this.lines.length;i++){
+	for(var i=0;i<this.turtle.lines.length;i++){
 		this.ctxt.beginPath();
-		this.ctxt.moveTo(this.lines[i][0][0],this.lines[i][0][1]);
-		this.ctxt.lineTo(this.lines[i][1][0],this.lines[i][1][1]);
+		this.ctxt.moveTo(this.turtle.lines[i][0][0],this.turtle.lines[i][0][1]);
+		this.ctxt.lineTo(this.turtle.lines[i][1][0],this.turtle.lines[i][1][1]);
 		this.ctxt.stroke();
 	}
 
-	this.drawTurtle(previewTurtle);
-	this.drawTurtle(turtle);
+	this.drawTurtle(this.previewTurtle);
+	this.drawTurtle(this.turtle);
 }
 
-canvasState.prototype.addLine = function(startPos,endPos){
-	this.lines.push([startPos,endPos]);
+CanvasState.prototype.addLine = function(startPos,endPos){
+	this.turtle.lines.push([startPos,endPos]);
 
 	var vec = xy2vec(startPos[0],startPos[1],endPos[0],endPos[1]);
 	sx = Math.cos(vec.angle);
@@ -70,22 +70,22 @@ canvasState.prototype.addLine = function(startPos,endPos){
 	}
 }
 
-canvasState.prototype.addPreviewLine = function(startPos,endPos){
-	this.previewLines.push([startPos,endPos]);
+CanvasState.prototype.addPreviewLine = function(startPos,endPos){
+	this.previewTurtle.lines.push([startPos,endPos]);
 }
 
-canvasState.prototype.clear = function(){
-	this.lines = [];
+CanvasState.prototype.clear = function(){
+	this.turtle.lines = [];
 	this.ctxt.clearRect(0,0,this.canvas.width,this.canvas.height);
 	this.draw();
 }
 
-canvasState.prototype.clearPreview = function(){
-	this.previewLines = [];
+CanvasState.prototype.clearPreview = function(){
+	this.previewTurtle.lines = [];
 	//this.draw();
 }
 
-canvasState.prototype.changeChallenge = function(i){
+CanvasState.prototype.changeChallenge = function(i){
 	this.challengesObj.setChallenge(i);
 	this.draw();
 }
@@ -93,8 +93,9 @@ canvasState.prototype.changeChallenge = function(i){
 function setUpCanvas(){
 	var canvas = document.createElement('canvas');
 
-	canvas.setAttribute('width','400')
-	canvas.setAttribute('height','400')
+	var dim = 400;
+	canvas.setAttribute('width',dim)
+	canvas.setAttribute('height',dim)
 	canvas.setAttribute('style','border:1px solid #000000;')
 	canvas.setAttribute('id','canvas');
     
@@ -102,9 +103,27 @@ function setUpCanvas(){
 
     canvas.addEventListener('click', line2click);
 
-    var state = new canvasState(canvas);
+    var t = new Turtle(dim/2,dim/2,false);
+    var pt = new Turtle(dim/2,dim/2,true);
+
+    var state = new CanvasState(canvas,t,pt);
 
     return state;
+}
+
+function getCursorPosition(e) {
+    var x;
+    var y;
+
+    if (e.pageX != undefined && e.pageY != undefined) {
+        x = e.pageX;
+        y = e.pageY;
+    } else {
+        x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+    
+    return [x, y];
 }
 
 function line2click(e){
@@ -114,15 +133,15 @@ function line2click(e){
   mx = p[0] - this.offsetLeft;
   my = p[1] - this.offsetTop;
 
-  var vec=xy2vec(turtle.x(),turtle.y(),mx,my);
+  var vec=xy2vec(canvasState.turtle.x(),canvasState.turtle.y(),mx,my);
 
-  degreeTurn = Math.round( (vec.angle - turtle.angle())/Math.PI*180 );
+  degreeTurn = Math.round( (vec.angle - canvasState.turtle.angle())/Math.PI*180 );
   disp = Math.round(vec.mag);
 
   turnCmd = degreeTurn<0?'lt '+(-degreeTurn):'rt '+degreeTurn;
 
   //console.log('rt '+degreeTurn+' fd '+disp);
-  evalSource(turnCmd+' fd '+ disp);
+  runSource(turnCmd+' fd '+ disp);
 }
 
 function xy2vec(x1,y1,x2,y2){
@@ -134,3 +153,11 @@ function xy2vec(x1,y1,x2,y2){
 	result.mag = Math.sqrt(dx*dx+dy*dy);
 	return result;
 }
+
+CanvasState.prototype.resetPreview = function(){
+  this.clearPreview();
+  this.previewTurtle.x(this.turtle.x());
+  this.previewTurtle.y(this.turtle.y());
+  this.previewTurtle.angle(this.turtle.angle());
+  canvasState.draw();
+};

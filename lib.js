@@ -1,63 +1,65 @@
-/*
-  Copyright (c) 2007 Alessandro Warth <awarth@cs.ucla.edu>
+// try to use StringBuffer instead of string concatenation to improve performance
 
-  Permission is hereby granted, free of charge, to any person
-  obtaining a copy of this software and associated documentation
-  files (the "Software"), to deal in the Software without
-  restriction, including without limitation the rights to use,
-  copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the
-  Software is furnished to do so, subject to the following
-  conditions:
+function StringBuffer() {
+  this.strings = []
+  for (var idx = 0; idx < arguments.length; idx++)
+    this.nextPutAll(arguments[idx])
+}
+StringBuffer.prototype.nextPutAll = function(s) { this.strings.push(s) }
+StringBuffer.prototype.contents   = function()  { return this.strings.join("") }
+String.prototype.writeStream      = function() { return new StringBuffer(this) }
 
-  The above copyright notice and this permission notice shall be
-  included in all copies or substantial portions of the Software.
+// make Arrays print themselves sensibly
 
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-  OTHER DEALINGS IN THE SOFTWARE.
-*/
+printOn = function(x, ws) {
+  if (x === undefined || x === null)
+    ws.nextPutAll("" + x)
+  else if (x.constructor === Array) {
+    ws.nextPutAll("[")
+    for (var idx = 0; idx < x.length; idx++) {
+      if (idx > 0)
+        ws.nextPutAll(", ")
+      printOn(x[idx], ws)
+    }
+    ws.nextPutAll("]")
+  }
+  else
+    ws.nextPutAll(x.toString())
+}
 
+Array.prototype.toString = function() { var ws = "".writeStream(); printOn(this, ws); return ws.contents() }
+
+// delegation
+
+objectThatDelegatesTo = function(x, props) {
+  var f = function() { }
+  f.prototype = x
+  var r = new f()
+  for (var p in props)
+    if (props.hasOwnProperty(p))
+      r[p] = props[p]
+  return r
+}
 
 // some reflective stuff
 
-Object.prototype.delegated = function() {
-  var constr = function() { }
-  constr.prototype = this
-  return new constr()
-}
-
-Object.prototype.ownPropertyNames = function() {
+ownPropertyNames = function(x) {
   var r = []
-  for (name in this)
-    if (this.hasOwnProperty(name))
+  for (var name in x)
+    if (x.hasOwnProperty(name))
       r.push(name)
   return r
 }
 
-Object.prototype.hasProperty = function(p) { return this[p] != undefined }
+isImmutable = function(x) {
+   return x === null || x === undefined || typeof x === "boolean" || typeof x === "number" || typeof x === "string"
+}
 
+String.prototype.digitValue  = function() { return this.charCodeAt(0) - "0".charCodeAt(0) }
+
+isSequenceable = function(x) { return typeof x == "string" || x.constructor === Array }
 
 // some functional programming stuff
-
-Array.prototype.map = function(f) {
-  var r = []
-  for (var idx = 0; idx < this.length; idx++)
-    r[idx] = f(this[idx])
-  return r
-}
-
-Array.prototype.reduce = function(f, z) {
-  var r = z
-  for (var idx = 0; idx < this.length; idx++)
-    r = f(r, this[idx])
-  return r
-}
 
 Array.prototype.delimWith = function(d) {
   return this.reduce(
@@ -70,29 +72,7 @@ Array.prototype.delimWith = function(d) {
    [])
 }
 
-
-// some smalltalk stuff
-
-Object.prototype.at = function(idx) { return this[idx] }
-String.prototype.at = function(idx) { return this.charAt(idx) }
-
-Object.prototype.atput  = function(idx, val) { return this[idx] = val }
-
-Object.prototype.isNumber    = function() { return false }
-Number.prototype.isNumber    = function() { return true }
-
-Object.prototype.isCharacter = function() { return false }
-
-String.prototype.isCharacter = function() { return this.length == 1 }
-String.prototype.isDigit     = function() { return this.isCharacter() && this >= "0" && this <= "9" }
-String.prototype.isLower     = function() { return this.isCharacter() && this >= "a" && this <= "z" }
-String.prototype.isUpper     = function() { return this.isCharacter() && this >= "A" && this <= "Z" }
-
-String.prototype.digitValue  = function() { return this.charCodeAt(0) - "0".charCodeAt(0) }
-
-Object.prototype.isSequenceable = false
-Array.prototype.isSequenceable  = true
-String.prototype.isSequenceable = true
+// Squeak's ReadStream, kind of
 
 function ReadStream(anArrayOrString) {
   this.src = anArrayOrString
@@ -101,46 +81,83 @@ function ReadStream(anArrayOrString) {
 ReadStream.prototype.atEnd = function() { return this.pos >= this.src.length }
 ReadStream.prototype.next  = function() { return this.src.at(this.pos++) }
 
+// escape characters
 
-// use this instead of string concatenation to improve performance
-
-function StringBuffer() {
-  this.strings = []
-  for (var idx = 0; idx < arguments.length; idx++)
-    this.nextPutAll(arguments[idx])
+String.prototype.pad = function(s, len) {
+  var r = this
+  while (r.length < len)
+    r = s + r
+  return r
 }
-StringBuffer.prototype.nextPutAll = function(s) { this.strings.push(s) }
-StringBuffer.prototype.contents   = function()  { return this.strings.join("") }
-String.prototype.writeStream = function() { return new StringBuffer(this) }
 
-
-// should be called "flatten" but isn't in order to prevent conflicts w/ the popular prototoype library
-Object.prototype.squish = function(dest) {
-  if (dest == undefined)
-    dest = []
-  dest.push(this)
-  return dest
+escapeStringFor = new Object()
+for (var c = 0; c < 128; c++)
+  escapeStringFor[c] = String.fromCharCode(c)
+escapeStringFor["'".charCodeAt(0)]  = "\\'"
+escapeStringFor['"'.charCodeAt(0)]  = '\\"'
+escapeStringFor["\\".charCodeAt(0)] = "\\\\"
+escapeStringFor["\b".charCodeAt(0)] = "\\b"
+escapeStringFor["\f".charCodeAt(0)] = "\\f"
+escapeStringFor["\n".charCodeAt(0)] = "\\n"
+escapeStringFor["\r".charCodeAt(0)] = "\\r"
+escapeStringFor["\t".charCodeAt(0)] = "\\t"
+escapeStringFor["\v".charCodeAt(0)] = "\\v"
+escapeChar = function(c) {
+  var charCode = c.charCodeAt(0)
+  if (charCode < 128)
+    return escapeStringFor[charCode]
+  else if (128 <= charCode && charCode < 256)
+    return "\\x" + charCode.toString(16).pad("0", 2)
+  else
+    return "\\u" + charCode.toString(16).pad("0", 4)
 }
-Array.prototype.squish  = function(dest) {
-  if (dest == undefined)
-    dest = []
+
+function unescape(s) {
+  if (s.charAt(0) == '\\')
+    switch (s.charAt(1)) {
+      case "'":  return "'"
+      case '"':  return '"'
+      case '\\': return '\\'
+      case 'b':  return '\b'
+      case 'f':  return '\f'
+      case 'n':  return '\n'
+      case 'r':  return '\r'
+      case 't':  return '\t'
+      case 'v':  return '\v'
+      case 'x':  return String.fromCharCode(parseInt(s.substring(2, 4), 16))
+      case 'u':  return String.fromCharCode(parseInt(s.substring(2, 6), 16))
+      default:   return s.charAt(1)
+    }
+  else
+    return s
+}
+
+String.prototype.toProgramString = function() {
+  var ws = '"'.writeStream()
   for (var idx = 0; idx < this.length; idx++)
-    this[idx].squish(dest)
-  return dest
+    ws.nextPutAll(escapeChar(this.charAt(idx)))
+  ws.nextPutAll('"')
+  return ws.contents()
 }
 
+// C-style tempnam function
 
-// to fetch text from other pages
+function tempnam(s) { return (s ? s : "_tmpnam_") + tempnam.n++ }
+tempnam.n = 0
 
-function fetch(url, callback) {
-  var xmlHttp = window.XMLHttpRequest ? new XMLHttpRequest : new ActiveXObject("Microsoft.XMLHTTP")
-  xmlHttp.onreadystatechange = function() { fetchCallback(xmlHttp, callback) }
-  xmlHttp.open('GET', url, true);
-  xmlHttp.send(null);
-}
+// unique tags for objects (useful for making "hash tables")
 
-function fetchCallback(xmlHttp, callback) {
-  if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-    callback(xmlHttp.responseText)
-}
+getTag = (function() {
+  var numIdx = 0
+  return function(x) {
+    if (x === null || x === undefined)
+      return x
+    switch (typeof x) {
+      case "boolean": return x == true ? "Btrue" : "Bfalse"
+      case "string":  return "S" + x
+      case "number":  return "N" + x
+      default:        return x.hasOwnProperty("_id_") ? x._id_ : x._id_ = "R" + numIdx++
+    }
+  }
+})()
 
