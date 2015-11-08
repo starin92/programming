@@ -42,18 +42,30 @@ function setup() {
     cmd          = cmdName:n expr*:args                          -> ('_this.lookup(\"' + n + '\").apply(_this, [' +\
                                                                        args.join(',') + '])'),\
     decl         = \"to\" cmdName:n arg*:args cmds:body  \"end\"     -> ('_this.logoFunctions[\"' + n + '\"]=function(' +\
-                                                                       args.join(',') + '){' + body + '}'),\
+                                                                       args.join(',') + '){ if(arguments.length<'+args.length+') throw new MissingArgErr(\"'+n+'\",'+args.length+');' + body + '}'),\
     topLevelCmd  = decl | cmd,\
     topLevelCmds = topLevelCmd*:xs spaces end                    -> ('(function(){var _this=this;' +\
                                                                        xs.join(',') +\
                                                                        '})')\
     }"
-  console.log('Loading Grammar...');
+  // console.log('Loading Grammar...');
 
-  //The line below is replaced by the generated code below it
-  //evalSource(grammar);
+  // //The line below is replaced by the generated code below it
+  // //evalSource(grammar);
+  // var translation;
 
-  Logo=objectThatDelegatesTo(OMeta,{
+  // try{ translation = translateCode(grammar)
+  // } catch (e) {
+  //   //Parse Error
+  //   if (e.errorPos != undefined) {
+  //     alert('Parse error:'+grammar.substring(0,e.errorPos)+' ERROR ->'+grammar.substring(e.errorPos,source.length));
+  //   }
+  // }
+
+  // eval(translation);
+  //setSource(translation);
+
+Logo=objectThatDelegatesTo(OMeta,{
 "name":function(){var $elf=this,_fromIdx=this.input.idx;return (function(){this._apply("spaces");return this._consumedBy((function(){return (function(){this._apply("letter");return this._many((function(){return this._or((function(){return this._apply("letter")}),(function(){return this._apply("digit")}))}))}).call(this)}))}).call(this)},
 "cmdName":function(){var $elf=this,_fromIdx=this.input.idx,n;return (function(){n=this._apply("name");this._pred((n != "to"));this._pred((n != "end"));return n}).call(this)},
 "number":function(){var $elf=this,_fromIdx=this.input.idx;return (function(){this._apply("spaces");return this._consumedBy((function(){return this._many1((function(){return this._apply("digit")}))}))}).call(this)},
@@ -66,15 +78,13 @@ function setup() {
 "relExpr":function(){var $elf=this,_fromIdx=this.input.idx,x,y;return this._or((function(){return (function(){x=this._apply("addExpr");this._applyWithArgs("token","<");y=this._apply("addExpr");return ((x + "<") + y)}).call(this)}),(function(){return (function(){x=this._apply("addExpr");this._applyWithArgs("token","<=");y=this._apply("addExpr");return ((x + "<=") + y)}).call(this)}),(function(){return (function(){x=this._apply("addExpr");this._applyWithArgs("token",">");y=this._apply("addExpr");return ((x + ">") + y)}).call(this)}),(function(){return (function(){x=this._apply("addExpr");this._applyWithArgs("token",">=");y=this._apply("addExpr");return ((x + ">=") + y)}).call(this)}),(function(){return this._apply("addExpr")}))},
 "expr":function(){var $elf=this,_fromIdx=this.input.idx;return this._apply("relExpr")},
 "cmd":function(){var $elf=this,_fromIdx=this.input.idx,n,args;return (function(){n=this._apply("cmdName");args=this._many((function(){return this._apply("expr")}));return (((("_this.lookup(\"" + n) + "\").apply(_this, [") + args.join(",")) + "])")}).call(this)},
-"decl":function(){var $elf=this,_fromIdx=this.input.idx,n,args,body;return (function(){this._applyWithArgs("token","to");n=this._apply("cmdName");args=this._many((function(){return this._apply("arg")}));body=this._apply("cmds");this._applyWithArgs("token","end");return (((((("_this.logoFunctions[\"" + n) + "\"]=function(") + args.join(",")) + "){") + body) + "}")}).call(this)},
+"decl":function(){var $elf=this,_fromIdx=this.input.idx,n,args,body;return (function(){this._applyWithArgs("token","to");n=this._apply("cmdName");args=this._many((function(){return this._apply("arg")}));body=this._apply("cmds");this._applyWithArgs("token","end");return (((((((((((("_this.logoFunctions[\"" + n) + "\"]=function(") + args.join(",")) + "){ if(arguments.length<") + args["length"]) + ") throw new MissingArgErr(\"") + n) + "\",") + args["length"]) + ");") + body) + "}")}).call(this)},
 "topLevelCmd":function(){var $elf=this,_fromIdx=this.input.idx;return this._or((function(){return this._apply("decl")}),(function(){return this._apply("cmd")}))},
 "topLevelCmds":function(){var $elf=this,_fromIdx=this.input.idx,xs;return (function(){xs=this._many((function(){return this._apply("topLevelCmd")}));this._apply("spaces");this._apply("end");return (("(function(){var _this=this;" + xs.join(",")) + "})")}).call(this)}})
 
   $('workspaceForm').source.onkeydown = onShortCutKey
 
-  console.log('Setting Up Canvas...'); 
   canvasState = setUpCanvas(); 
-  console.log('SetUp Done');
 }
 
 function translateCode(s) {

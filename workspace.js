@@ -65,30 +65,8 @@ function setSource(str) {
   }
 };
 
-function evalSource(source) {
-  var translation;
-
-  try { translation = translateCode(source) }
-  catch (e) {
-    //Parse Error
-    if (e.errorPos != undefined) {
-      console.log(e);
-      alert('Parse error:'+source.substring(0,e.errorPos)+' ERROR ->'+source.substring(e.errorPos,source.length));
-    }
-    return undefined
-  }
-  try {
-    return eval(translation);
-  } catch (e) {
-    console.log(e);
-    alert('Syntax Error');
-    //alert("Oops!\n\n" + e);
-    throw e;
-  }
-};
-
 function runSource(source){
-    if(REPEAT){
+  if(REPEAT){
     REPEAT=false;
     var n = prompt("How many times should that repeat?", "2");
     
@@ -101,9 +79,34 @@ function runSource(source){
   }
 
   setSource(source);
+
   source = 'Logo.matchAll("'+source+'","topLevelCmds");';
-  var turtleCode = evalSource(source);
-  eval(turtleCode+'.apply(canvasState.turtle)');
+
+  var translation, turtleCode;
+
+  try{ translation = translateCode(source)
+  } catch (e) {
+    //Parse Error
+    if (e.errorPos != undefined) {
+      alert('Parse error:'+source.substring(0,e.errorPos)+' ERROR ->'+source.substring(e.errorPos,source.length));
+    }
+    return;
+  }
+
+  try{
+    turtleCode = eval(translation);
+  } catch (e) {
+    //Syntax Error
+    alert('Syntax Error');
+    //throw e;
+  }
+
+  try{
+    eval(turtleCode+'.apply(canvasState.turtle)');
+  }catch (e){
+    alert(e.message);
+  }
+
   previewSource(getSource());
 };
 
@@ -111,9 +114,28 @@ function previewSource(source){
   if(document.getElementById("previewingCheckbox").checked){
     canvasState.resetPreview();
 
+    var previewCode,source;
+
     source = 'Logo.matchAll("'+source+'","topLevelCmds");';
-    var previewCode = evalSource(source);
-    eval(previewCode+'.apply(canvasState.previewTurtle)');
+
+    try { 
+      translation = translateCode(source) 
+    }catch (e){
+    //Parse Error
+      return;
+    }
+
+    try {
+      previewCode = eval(translation);
+    } catch (e) {
+      return;
+    }
+
+    try{
+      eval(previewCode+'.apply(canvasState.previewTurtle)');
+    }catch (e){
+      return;
+    }
 
   }
 }

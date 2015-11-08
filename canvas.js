@@ -135,7 +135,7 @@ function line2click(e){
 
   var vec=xy2vec(canvasState.turtle.x(),canvasState.turtle.y(),mx,my);
 
-  degreeTurn = Math.round( (vec.angle - canvasState.turtle.angle())/Math.PI*180 );
+  degreeTurn = Math.round( (vec.angle - canvasState.turtle.angle())/Math.PI*180 )%360;
   disp = Math.round(vec.mag);
 
   turnCmd = degreeTurn<0?'lt '+(-degreeTurn):'rt '+degreeTurn;
