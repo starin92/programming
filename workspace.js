@@ -4,7 +4,7 @@
 //Global State Variables for Recording and Repeating functionality
 var REPEAT=false;
 var RECORDING=false;
-var MYFUNDEFINED=false;
+var MYFUNNUM=0;
 
 function ParseError() { }
 
@@ -20,7 +20,7 @@ function onShortCutKey(evt) {
     var handledIt = true
     switch (charCode) {
       case 68: doIt();            break
-      case 80: printIt();         break
+      //case 80: printIt();         break
       default: handledIt = false; return true
     }
   }
@@ -37,13 +37,6 @@ function onShortCutKey(evt) {
     }
   }
   return false
-};
-
-function printIt() {
-  var result       = runSource(getSource());
-  if (!result)
-    return;
-  alert(result.result);
 };
 
 function doIt() {
@@ -151,22 +144,22 @@ function repeatClick(){
 function recordClick(){
   var rb = document.getElementById('recordButton')
   if(!RECORDING){
-    setSource('to function1\n');
+    setSource('to function'+MYFUNNUM+'\n');
     RECORDING=true;
     rb.value = 'stop';
 
   }else{
     setSource('end');
     RECORDING=false;
-    MYFUNDEFINED=true;
+    MYFUNNUM++;
     rb.value = 'record';
     doIt();
   }
 };
 
 function playClick(){
-  if(MYFUNDEFINED){
-    runSource('function1');
+  if(MYFUNNUM!=0){
+    runSource('function'+(MYFUNNUM-1));
   }else{
     alert('Error: You must record a funciton before pressing play');
   }

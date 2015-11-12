@@ -4,6 +4,7 @@ function challenges(){
 
 	var paths = [];
 	
+	//***repeat challenges***
 	paths.push({start:[200,200],end:[220,200]});
 	this.addChallenge(paths);
 
@@ -12,19 +13,73 @@ function challenges(){
 	this.addChallenge(paths.slice(0,2))
 	this.addChallenge(paths);
 
-	paths=this.regularPolygon(3,30,200,200,true);
+	paths=this.regularPolygon(3,20,200,200,true);
 	this.addChallenge(paths.slice(0,2))
 	this.addChallenge(paths);
 
 	var sides = [6,12,24];
 	for(var sIdx=0;sIdx<sides.length;sIdx++){
-		paths=this.regularPolygon(sides[sIdx],20,200,200);
+		paths=this.regularPolygon(sides[sIdx],sIdx==2?10:20,200,200);
 		this.addChallenge(paths.slice(0,2))
 		this.addChallenge(paths);
 	}
 
-	//paths.push({start:[200,200],end:});
-	//paths.push({start:,end:});
+	//***function to..end challenges***
+	//adding multiple triangles
+	var i;
+	paths=[];
+	for(i=0;i<4;i++){
+		paths=paths.concat(this.regularPolygon(3,20,200+20*i,200,true));
+	}
+	this.addChallenge(paths);
+
+	//adding multiple squares
+	var i;
+	paths=[];
+	for(i=0;i<4;i++){
+		paths=paths.concat(this.regularPolygon(4,20,200+20*i,200));
+	}
+	this.addChallenge(paths);
+
+	paths=[];
+	for(i=0;i<4;i++){
+		paths=paths.concat(this.regularPolygon(3,20,200+20*i,200,true));
+		paths=paths.concat(this.regularPolygon(4,20,200+20*i,200));
+	}
+	this.addChallenge(paths);
+
+	//***parameter to :arg...end challenges***
+	paths=[];
+	var size;
+	var offset=0;
+	for(i=0;i<4;i++){
+		size=10*(i+1)+10;
+		paths=paths.concat(this.regularPolygon(3,size,200+offset,200,true));
+		offset+=size;
+	}
+	this.addChallenge(paths);
+
+	paths=[];
+	var size;
+	var offset=0;
+	for(i=0;i<4;i++){
+		size=10*(i+1)+10;
+		paths=paths.concat(this.regularPolygon(4,size,200+offset,200));
+		offset+=size;
+	}
+	this.addChallenge(paths);
+
+	paths=[];
+	var size;
+	var offset=0;
+	for(i=0;i<4;i++){
+		size=10*(i+1)+10;
+		paths=paths.concat(this.regularPolygon(3,size,200+offset,200,true));
+		paths=paths.concat(this.regularPolygon(4,size,200+offset,200));
+		offset+=size;
+	}
+	this.addChallenge(paths);
+
 }
 
 challenges.prototype.regularPolygon = function(sides,len,x,y,optionalDirection){
@@ -102,7 +157,7 @@ challenges.prototype.checkSolved = function(cs){
 	for(var i=0;i<theChallenge.points.length;i++){
 		var p1 = theChallenge.points[i];
 		for(var j=0;j<cs.points.length;j++){
-			if(distBetween(p1,cs.points[j])<=3){
+			if(distBetween(p1,cs.points[j])<=5){
 				break;
 			}
 		}
