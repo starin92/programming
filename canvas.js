@@ -6,8 +6,21 @@ function CanvasState(htmlCanvas,turtle,previewTurtle){
 	this.points = [];
 
 	this.challengesObj = new challenges();
+	this.addChallengeButtons();
 
 	this.draw();
+}
+
+CanvasState.prototype.addChallengeButtons = function(){
+	var btn,t;
+	for(var i=0;i<this.challengesObj.challengeArray.length;i++){
+		btn = document.createElement('button');
+		t = document.createTextNode('Challenge '+i);
+		btn.appendChild(t);
+		btn.setAttribute('onclick', 'canvasState.changeChallenge('+i+')');
+		btn.setAttribute('class', 'pure-button');
+		document.body.appendChild(btn);
+	}
 }
 
 CanvasState.prototype.drawTurtle = function(turtleObj){
@@ -96,7 +109,7 @@ function setUpCanvas(){
 	var dim = 400;
 	canvas.setAttribute('width',dim)
 	canvas.setAttribute('height',dim)
-	canvas.setAttribute('style','border:1px solid #000000;')
+	canvas.setAttribute('style','border:1px solid #000000;width:100%')
 	canvas.setAttribute('id','canvas');
     
     document.getElementById('playArea').appendChild(canvas);
@@ -115,13 +128,11 @@ function getCursorPosition(e) {
     var x;
     var y;
 
-    if (e.pageX != undefined && e.pageY != undefined) {
-        x = e.pageX;
-        y = e.pageY;
-    } else {
-        x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-        y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-    }
+    var rect = canvas.getBoundingClientRect();
+    x = Math.round((e.clientX-rect.left)/rect.width*canvas.width);
+	y = Math.round((e.clientY-rect.top)/rect.height*canvas.height);
+	x += e.pageX-e.clientX+rect.left;
+	y += e.pageY-e.clientY+rect.top;
     
     return [x, y];
 }

@@ -2,6 +2,10 @@ function challenges(){
 	this.challengeArray = [];
 	this.challengeIdx = 0;
 
+	this.loadPaths();
+}
+
+challenges.prototype.loadPaths = function(){
 	var paths = [];
 	
 	//***repeat challenges***
@@ -79,7 +83,6 @@ function challenges(){
 		offset+=size;
 	}
 	this.addChallenge(paths);
-
 }
 
 challenges.prototype.regularPolygon = function(sides,len,x,y,optionalDirection){

@@ -1,6 +1,7 @@
 <html>
   <head>
     <title>Logo Learning</title>
+    <link rel="stylesheet" type="text/css" href="mystyle.css">
     <script src="prototype.js"></script>
     <script src="prototype-fix.js"></script>
     <script src="lib.js"></script>
@@ -85,6 +86,7 @@ Logo=objectThatDelegatesTo(OMeta,{
   $('workspaceForm').source.onkeydown = onShortCutKey
 
   canvasState = setUpCanvas(); 
+  //window.onresize = resizeCanvas;
 }
 
 function translateCode(s) {
@@ -96,9 +98,11 @@ function translateCode(s) {
   </head>
 
   <body onLoad='setup()'>
+    <!--
     <span>repeat</span>
     <br>
-    <input type=button value="Challenge 0" onClick="canvasState.changeChallenge(0)">
+    
+    <button value="Challenge 0" onClick="canvasState.changeChallenge(0)">Challenge 0</button>
     <input type=button value="Challenge 1" onClick="canvasState.changeChallenge(1)">
     <input type=button value="Challenge 2" onClick="canvasState.changeChallenge(2)">
     <input type=button value="Challenge 3" onClick="canvasState.changeChallenge(3)">
@@ -122,22 +126,23 @@ function translateCode(s) {
     <input type=button value="Challenge 15" onClick="canvasState.changeChallenge(15)">
     <input type=button value="Challenge 16" onClick="canvasState.changeChallenge(16)">
     <br>
+     -->
     <b><span>Play Area</span></b>
     <div id=playArea style="visibility: visible; display: block"></div>
     <span id='locationText'>200,200,0</span>
     <br>
-    <input type=button value="forward" onClick="runSource('fd 10')">
-    <input type=button value="backward" onClick="runSource('bk 10')">
-    <input type=button value="rotate right" onClick="runSource('rt 5')">
-    <input type=button value="rotate left" onClick="runSource('lt 5')">
-    <input type=button value="pen up" onClick="runSource('pu')">
-    <input type=button value="pen down" onClick="runSource('pd')">
-    <input type=button value="clear screen" onClick="runSource('clearscreen')">
+    <button class='pure-button' onClick="runSource('fd 10')">forward</button>
+    <button class='pure-button' onClick="runSource('bk 10')">backward</button>
+    <button class='pure-button' onClick="runSource('rt 5')">rotate right</button>
+    <button class='pure-button' onClick="runSource('lt 5')">rotate left</button>
+    <button class='pure-button' onClick="runSource('pu')">pen up</button>
+    <button class='pure-button' onClick="runSource('pd')">pen down</button>
+    <button class='pure-button' onClick="runSource('clearscreen')">clear screen</button>
     <br>
-    <input type=button value="repeat" onClick="repeatClick()">
+    <button class='pure-button' onClick="repeatClick()">repeat</button>
     <br>
-    <input type=button id="recordButton" value="record" onClick="recordClick()">
-    <input type=button value="play" onClick="playClick()">
+    <button class='pure-button' id="recordButton" onClick="recordClick()">record</button>
+    <button class='pure-button' onClick="playClick()">play</button>
 
     <br>
     <form id=workspaceForm>
@@ -156,7 +161,7 @@ end
 spiral 0 89
         </textarea><br>
         <input type="checkbox" id="previewingCheckbox" checked="true" onchange="previewCBchange()">Preview Code<br>
-        <input type=button value="do it (ctrl+d)"     onClick="doIt()"        style="margin-bottom: .4em">
+        <button class='pure-button' onClick="doIt()">do it (ctrl+d)</button>
         <br>
       </div>
     </form>
