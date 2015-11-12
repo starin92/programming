@@ -47,15 +47,18 @@ function doIt() {
 
 /* Get expression from textarea */
 function getSource() {
-  return $('workspaceForm').source.value;
+  return document.getElementById("source").value;
 };
 
 function setSource(str) {
+  var source = document.getElementById("source");
+  var newStr = source.value;
   if(RECORDING){
-    $('workspaceForm').source.value += str + '\n';
+    newStr += str + '\n';
   }else{
-    $('workspaceForm').source.value = str;
+    newStr = str;
   }
+  source.value = newStr;
 };
 
 function runSource(source){
@@ -146,13 +149,18 @@ function recordClick(){
   if(!RECORDING){
     setSource('to function'+MYFUNNUM+'\n');
     RECORDING=true;
-    rb.value = 'stop';
+    rb.innerHTML = 'stop';
 
   }else{
     setSource('end');
     RECORDING=false;
+    if(MYFUNNUM==0){
+      var pb = document.getElementById('playButton')
+      pb.setAttribute('class','pure-button');
+      pb.disabled = false;
+    }
     MYFUNNUM++;
-    rb.value = 'record';
+    rb.innerHTML = 'record';
     doIt();
   }
 };

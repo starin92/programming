@@ -1,5 +1,6 @@
 .pure-button {
     /* Structure */
+    margin: .25em;
     display: inline-block;
     zoom: 1;
     line-height: normal;
@@ -28,8 +29,8 @@
 
 .pure-button {
     font-family: inherit;
-    font-size: 100%;
-    padding: 0.5em 1em;
+    font-size: 10pt;
+    padding: .5em 1em;
     color: #444; /* rgba not supported (IE 8) */
     color: rgba(0, 0, 0, 0.80); /* rgba supported */
     border: 1px solid #999;  /*IE 6/7/8*/

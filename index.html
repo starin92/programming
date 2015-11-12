@@ -83,7 +83,7 @@ Logo=objectThatDelegatesTo(OMeta,{
 "topLevelCmd":function(){var $elf=this,_fromIdx=this.input.idx;return this._or((function(){return this._apply("decl")}),(function(){return this._apply("cmd")}))},
 "topLevelCmds":function(){var $elf=this,_fromIdx=this.input.idx,xs;return (function(){xs=this._many((function(){return this._apply("topLevelCmd")}));this._apply("spaces");this._apply("end");return (("(function(){var _this=this;" + xs.join(",")) + "})")}).call(this)}})
 
-  $('workspaceForm').source.onkeydown = onShortCutKey
+  document.getElementById("source").onkeydown = onShortCutKey
 
   canvasState = setUpCanvas(); 
   //window.onresize = resizeCanvas;
@@ -98,58 +98,9 @@ function translateCode(s) {
   </head>
 
   <body onLoad='setup()'>
-    <!--
-    <span>repeat</span>
-    <br>
-    
-    <button value="Challenge 0" onClick="canvasState.changeChallenge(0)">Challenge 0</button>
-    <input type=button value="Challenge 1" onClick="canvasState.changeChallenge(1)">
-    <input type=button value="Challenge 2" onClick="canvasState.changeChallenge(2)">
-    <input type=button value="Challenge 3" onClick="canvasState.changeChallenge(3)">
-    <input type=button value="Challenge 4" onClick="canvasState.changeChallenge(4)">
-    <input type=button value="Challenge 5" onClick="canvasState.changeChallenge(5)">
-    <input type=button value="Challenge 6" onClick="canvasState.changeChallenge(6)">
-    <input type=button value="Challenge 7" onClick="canvasState.changeChallenge(7)">
-    <input type=button value="Challenge 8" onClick="canvasState.changeChallenge(8)">
-    <input type=button value="Challenge 9" onClick="canvasState.changeChallenge(9)">
-    <input type=button value="Challenge 10" onClick="canvasState.changeChallenge(10)">
-    <br>
-    <span>to...end</span>
-    <br>
-    <input type=button value="Challenge 11" onClick="canvasState.changeChallenge(11)">
-    <input type=button value="Challenge 12" onClick="canvasState.changeChallenge(12)">
-    <input type=button value="Challenge 13" onClick="canvasState.changeChallenge(13)">
-    <br>
-    <span>to :arg ... end</span>
-    <br>
-    <input type=button value="Challenge 14" onClick="canvasState.changeChallenge(14)">
-    <input type=button value="Challenge 15" onClick="canvasState.changeChallenge(15)">
-    <input type=button value="Challenge 16" onClick="canvasState.changeChallenge(16)">
-    <br>
-     -->
-    <b><span>Play Area</span></b>
-    <div id=playArea style="visibility: visible; display: block"></div>
-    <span id='locationText'>200,200,0</span>
-    <br>
-    <button class='pure-button' onClick="runSource('fd 10')">forward</button>
-    <button class='pure-button' onClick="runSource('bk 10')">backward</button>
-    <button class='pure-button' onClick="runSource('rt 5')">rotate right</button>
-    <button class='pure-button' onClick="runSource('lt 5')">rotate left</button>
-    <button class='pure-button' onClick="runSource('pu')">pen up</button>
-    <button class='pure-button' onClick="runSource('pd')">pen down</button>
-    <button class='pure-button' onClick="runSource('clearscreen')">clear screen</button>
-    <br>
-    <button class='pure-button' onClick="repeatClick()">repeat</button>
-    <br>
-    <button class='pure-button' id="recordButton" onClick="recordClick()">record</button>
-    <button class='pure-button' onClick="playClick()">play</button>
-
-    <br>
-    <form id=workspaceForm>
-      <b>Source</b>
-      <br>
-      <div id=source style="visibility: visible; display: block">
-        <textarea cols=64 rows=10 name=source style="font-family:monaco, monospace; font-size: 10pt" onchange="previewSource(this.value)" onkeyup="previewSource(this.value)">
+    <div style="width:100%">
+    <div id="sourceCodeDiv" style="float:left;width:60%;display:inline-block">
+      <textarea rows=10 id=source style="width:90%;position:relative;font-family:monaco, monospace; font-size: 10pt" onchange="previewSource(this.value)" onkeyup="previewSource(this.value)">
 to spiral :size :angle
   if :size < 100 [
     fd :size
@@ -159,11 +110,38 @@ to spiral :size :angle
 end
 
 spiral 0 89
-        </textarea><br>
-        <input type="checkbox" id="previewingCheckbox" checked="true" onchange="previewCBchange()">Preview Code<br>
-        <button class='pure-button' onClick="doIt()">do it (ctrl+d)</button>
-        <br>
-      </div>
-    </form>
+      </textarea>
+      <br>
+      <button class='pure-button' onClick="doIt()">do it (ctrl+d)</button>
+      <input type="checkbox" id="previewingCheckbox" checked="true" onchange="previewCBchange()">Preview Code</input>
+      <br>
+    </div>
+
+    <div id="toolbarDiv" style="float:left;width:40%;background-color:#999999;display:inline-block">
+      <button class='pure-button' onClick="runSource('fd 10')">forward</button>
+      <button class='pure-button' onClick="runSource('bk 10')">backward</button>
+      <br>
+      <button class='pure-button' onClick="runSource('rt 5')">rotate right</button>
+      <button class='pure-button' onClick="runSource('lt 5')">rotate left</button>
+      <br>
+      <button class='pure-button' onClick="runSource('pu')">pen up</button>
+      <button class='pure-button' onClick="runSource('pd')">pen down</button>
+      <button class='pure-button' onClick="runSource('clearscreen')">clear screen</button>
+      <br>
+      <br>
+      <button class='pure-button' onClick="repeatClick()">repeat</button>
+      <br>
+      <button class='pure-button' id="recordButton" onClick="recordClick()">record</button>
+      <button class='pure-button pure-button-disabled' disabled id="playButton" onClick="playClick()">play</button>
+      <br>
+    </div>
+
+  </div>
+
+    <div id="canvasDiv">
+      <span id='locationText'>200,200,0</span>
+    </div>
+
+    <br>
   </body>
 </html>

@@ -112,7 +112,9 @@ function setUpCanvas(){
 	canvas.setAttribute('style','border:1px solid #000000;width:100%')
 	canvas.setAttribute('id','canvas');
     
-    document.getElementById('playArea').appendChild(canvas);
+    var cDiv = document.getElementById('canvasDiv')
+    cDiv.insertBefore(canvas,cDiv.firstChild);
+    cDiv.insertBefore(document.createElement('br'),cDiv.children[1]);
 
     canvas.addEventListener('click', line2click);
 
