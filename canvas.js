@@ -6,8 +6,21 @@ function CanvasState(htmlCanvas,turtle,previewTurtle){
 	this.points = [];
 
 	this.challengesObj = new challenges();
+	this.addChallengeButtons();
 
 	this.draw();
+}
+
+CanvasState.prototype.addChallengeButtons = function(){
+	var btn,t;
+	for(var i=0;i<this.challengesObj.challengeArray.length;i++){
+		btn = document.createElement('button');
+		t = document.createTextNode('Challenge '+i);
+		btn.appendChild(t);
+		btn.setAttribute('onclick', 'canvasState.changeChallenge('+i+')');
+		btn.setAttribute('class', 'pure-button');
+		document.body.appendChild(btn);
+	}
 }
 
 CanvasState.prototype.drawTurtle = function(turtleObj){
@@ -91,6 +104,17 @@ CanvasState.prototype.changeChallenge = function(i){
 	this.draw();
 }
 
+function resizeCanvas(){
+	var canvas = document.getElementById('canvas');
+	var w=window.innerWidth;
+	var h=window.innerHeight;
+	var dim = w<h?w:h;
+	dim -= 50;
+	dim = dim<400?400:dim;
+	canvas.setAttribute('width',window.innerWidth);
+	canvas.setAttribute('height',window.innerWidth);
+}
+
 function setUpCanvas(){
 	var canvas = document.createElement('canvas');
 
@@ -105,6 +129,7 @@ function setUpCanvas(){
     cDiv.insertBefore(document.createElement('br'),cDiv.children[1]);
 
     canvas.addEventListener('click', line2click);
+    resizeCanvas();
 
     var t = new Turtle(dim/2,dim/2,false);
     var pt = new Turtle(dim/2,dim/2,true);
