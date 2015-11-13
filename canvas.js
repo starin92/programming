@@ -6,21 +6,8 @@ function CanvasState(htmlCanvas,turtle,previewTurtle){
 	this.points = [];
 
 	this.challengesObj = new challenges();
-	this.addChallengeButtons();
 
 	this.draw();
-}
-
-CanvasState.prototype.addChallengeButtons = function(){
-	var btn,t;
-	for(var i=0;i<this.challengesObj.challengeArray.length;i++){
-		btn = document.createElement('button');
-		t = document.createTextNode('Challenge '+i);
-		btn.appendChild(t);
-		btn.setAttribute('onclick', 'canvasState.changeChallenge('+i+')');
-		btn.setAttribute('class', 'pure-button');
-		document.body.appendChild(btn);
-	}
 }
 
 CanvasState.prototype.drawTurtle = function(turtleObj){
