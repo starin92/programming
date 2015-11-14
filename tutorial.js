@@ -176,9 +176,18 @@ function startChallengeIntro(name){
 	  intro.onchange(function(targetElement){
 	  	if(this._direction=='forward'){
 	  		switch(this._currentStep){
-	  			case 1:
+	  			case 0:
 	  				runSource('clearscreen');
+	  				document.getElementById('challenge3Btn').click();
 	  				break;
+	  			case 1:
+	  				setSource('fd 40\nlt 120');
+	  				break;
+	  			case 4:
+	  				lastElement.click();
+	  				break;
+	  			case 5:
+	  				lastElement.click();
 	  		}
 	  	}
 	  	lastElement = targetElement;
@@ -186,13 +195,39 @@ function startChallengeIntro(name){
 	  intro.setOptions({
 		steps: [
 		  { 
-			intro: ""
+			intro: "This set of challenges makes use of the repeat commands."
 		  },
 		  {
-			element: '#',
-			intro: "",
-			position: ''
+			element: '#canvas',
+			intro: "The first challenge requires you to draw a line and turn. This can be acheived doing the same thing twice.",
+			position: 'top'
+		  },
+		  {
+			element: '#source',
+			intro: "These two commands draw the line and turn the proper amount.",
+			position: 'right'
+		  },
+		  {
+			element: '#repeatBtn',
+			intro: "Click the repeat button then another command to do it multiple times.",
+			position: 'left'
+		  },
+		  {
+			element: '#doItBtn',
+			intro: "Next click the 'do it' button. In the dialog enter 2 then press OK to run the commands twice.",
+			position: 'right'
+		  },
+		  {
+			element: '#source',
+			intro: "Notice the command that was generated. Anything in the [] is done the specified number of times.",
+			position: 'right'
+		  },
+		  {
+			element: '#repeatGroupDiv',
+			intro: "Try to complete the rest of the challenges using repeat.",
+			position: 'top'
 		  }
+
 		]
 	  });
 	  break;

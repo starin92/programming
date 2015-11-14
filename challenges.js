@@ -63,8 +63,36 @@ challenges.prototype.createButton = function(i,parent){
 	btn.id = 'challenge'+i+'Btn';
 	btn.appendChild(t);
 	btn.setAttribute('onclick', 'canvasState.changeChallenge('+i+')');
-	btn.setAttribute('class', 'pure-button');
+	btn.setAttribute('class', 'challenge-button');
 	parent.appendChild(btn);
+}
+
+challenges.prototype.checkGroupSolved = function(i){
+	var floor,top,name;
+	if(i<3){
+		floor=0;
+		top=2;
+		name='basics';
+	}else if(i<11){
+		floor=3;
+		top=10;
+		name='repeat';	
+	}else if(i<14){
+		floor=11;
+		top=13;
+		name='functions';
+	}else{
+		floor=14;
+		top=16;
+		name='parameters';
+	}
+	for(var j=floor;j<top+1;j++){
+		if(!this.challengeArray[j].solved) break;
+	}
+	var c='chartreuse';
+	if(j===top+1) c='#FFFF66';
+	document.getElementById(name+'GroupDiv').style['borderColor'] = c;
+
 }
 
 challenges.prototype.loadPaths = function(){
@@ -230,6 +258,8 @@ challenges.prototype.checkSolved = function(cs){
 		if(j==cs.points.length) return;
 	}
 	theChallenge.solved = true;
+	document.getElementById('challenge'+this.challengeIdx+'Btn').setAttribute('class','challenge-button-solved');
+	this.checkGroupSolved(this.challengeIdx);
 	return;
 }
 

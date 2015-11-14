@@ -137,11 +137,7 @@ function previewSource(source){
 }
 
 function repeatClick(){
-  if(!REPEAT){
-    REPEAT=true;
-  }else{
-    REPEAT=false;
-  }
+  REPEAT=true;
 };
 
 function recordClick(){
