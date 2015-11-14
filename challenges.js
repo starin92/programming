@@ -6,11 +6,12 @@ function challenges(){
 	this.addButtons();
 }
 
-function toggleDiv(id){
-	var e = document.getElementById(id);
+function toggleDiv(name){
+	var e = document.getElementById(name+'Div');
 	if(e.style.display == 'block'){
 	  	e.style.display = 'none';
 	}else{
+		startChallengeIntro(name);
 	  	e.style.display = 'block';
 	}
 }
@@ -28,8 +29,9 @@ challenges.prototype.addButtonGroup = function(name,startIdx,endIdx,cDiv){
 
 	toggle = document.createElement('button');
 	toggle.setAttribute('class','text-button');
+	toggle.id = name + 'Toggle';
 	toggle.innerHTML = name;
-	toggle.onclick = function(){toggleDiv(name+'Div');};
+	toggle.onclick = function(){toggleDiv(name);};
 	gDiv.appendChild(toggle);
 
 	div = document.createElement('div');
@@ -46,11 +48,11 @@ challenges.prototype.addButtonGroup = function(name,startIdx,endIdx,cDiv){
 challenges.prototype.addButtons = function(){
 	var cDiv = document.getElementById('challengeDiv');
 
-	this.addButtonGroup('intro',0,2,cDiv);
+	this.addButtonGroup('basics',0,2,cDiv);
 
 	this.addButtonGroup('repeat',3,10,cDiv);
 
-	this.addButtonGroup('function',11,13,cDiv);
+	this.addButtonGroup('functions',11,13,cDiv);
 
 	this.addButtonGroup('parameters',14,16,cDiv);
 }
@@ -58,6 +60,7 @@ challenges.prototype.addButtons = function(){
 challenges.prototype.createButton = function(i,parent){
 	var btn = document.createElement('button');
 	var t = document.createTextNode('Challenge '+i);
+	btn.id = 'challenge'+i+'Btn';
 	btn.appendChild(t);
 	btn.setAttribute('onclick', 'canvasState.changeChallenge('+i+')');
 	btn.setAttribute('class', 'pure-button');
