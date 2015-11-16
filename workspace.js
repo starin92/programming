@@ -5,6 +5,7 @@
 var REPEAT=false;
 var RECORDING=false;
 var MYFUNNUM=0;
+var recordFlash;
 
 function ParseError() { }
 
@@ -19,7 +20,7 @@ function onShortCutKey(evt) {
   try {
     var handledIt = true
     switch (charCode) {
-      case 68: doIt();            break
+      case 68: if(!RECORDING) doIt();            break
       //case 80: printIt();         break
       default: handledIt = false; return true
     }
@@ -53,8 +54,9 @@ function getSource() {
 function setSource(str) {
   var source = document.getElementById("source");
   var newStr = source.value;
+  var newStrArr;
   if(RECORDING){
-    newStr += str + '\n';
+    newStr = newStr.slice(0,-5) + '\n' + str + '\nend\n';
   }else{
     newStr = str;
   }
@@ -141,23 +143,30 @@ function repeatClick(){
 };
 
 function recordClick(){
-  var rb = document.getElementById('recordButton')
+  var rb = document.getElementById('recordBtn');
+  var db = document.getElementById('doItBtn');
   if(!RECORDING){
-    setSource('to function'+MYFUNNUM+'\n');
+    setSource('to function'+MYFUNNUM+'\nend\n');
     RECORDING=true;
     rb.innerHTML = 'stop';
-
+    recordFlash = setInterval(function(){ 
+      var div = document.getElementById('inputDiv');
+      div.style.borderColor = div.style.borderColor=='rgb(0, 0, 0)'?'#FF0000':'#000000';
+    },1000);
+    db.setAttribute('class','pure-button pure-button-disabled');
   }else{
-    setSource('end');
     RECORDING=false;
     if(MYFUNNUM==0){
-      var pb = document.getElementById('playButton')
+      var pb = document.getElementById('playBtn')
       pb.setAttribute('class','pure-button');
       pb.disabled = false;
     }
     MYFUNNUM++;
     rb.innerHTML = 'record';
+    clearInterval(recordFlash);
+    document.getElementById('inputDiv').style.borderColor='#000000';
     doIt();
+    db.setAttribute('class','pure-button');
   }
 };
 

@@ -90,7 +90,7 @@ function startIntro(){
 	  },
 	  {
 	  	element: '#csBtn',
-	  	intro: "Clicking the 'clear screen' button will reset the turtle. Draw some more or try one of the challenges.",
+	  	intro: "Clicking 'clear screen' will reset the turtle. Draw some more or try one of the challenges.",
 		position: 'left'
 	  }
 	]
@@ -237,6 +237,33 @@ function startChallengeIntro(name){
 	  		switch(this._currentStep){
 	  			case 1:
 	  				runSource('clearscreen');
+	  				document.getElementById('challenge11Btn').click();
+	  				break;
+	  			case 3:
+	  			case 12:
+	  				if(!RECORDING) lastElement.click();
+	  				break;
+	  			case 4:
+	  			case 6:
+	  			case 9:
+	  			case 11:
+	  			case 13:
+	  			case 14:
+	  			case 19:
+	  				lastElement.click();
+	  				break;
+	  			case 7:
+	  				document.getElementById("source").value = 'to function'+MYFUNNUM+'\nfd 40\nlt 120\nend\n';
+	  				break;
+	  			case 8:
+	  				if(RECORDING) lastElement.click();
+	  				break;
+	  			case 15:
+	  				document.getElementById("source").value = 'to triangle\nrepeat 3 [ function'+(MYFUNNUM-1)+' ]\nend\n';
+	  				break;
+	  			case 17:
+	  				if(RECORDING) lastElement.click();
+	  				setSource('triangle\nfd 40\ntriangle');
 	  				break;
 	  		}
 	  	}
@@ -245,12 +272,107 @@ function startChallengeIntro(name){
 	  intro.setOptions({
 		steps: [
 		  { 
-			intro: ""
+			intro: "These challenges use functions with the 'to ... end' syntax."
 		  },
 		  {
-			element: '#',
-			intro: "",
-			position: ''
+			element: '#canvas',
+			intro: "The first challenge requires you to draw 4 triangles. You can do this by recording funtions.",
+			position: 'top'
+		  },
+		  {
+			element: '#recordBtn',
+			intro: "Press 'record' to create a function. A function will be a set of commands you can run with one command.",
+			position: 'left'
+		  },
+		  {
+			element: '#fdBtn',
+			intro: "Once you press 'record', it adds each command you enter to the function until you press 'stop'",
+			position:'left'
+		  },
+		  {
+			element: '#source',
+			intro: "Notice the to function# ... end was added to the source area.",
+			position: 'right'
+		  },		  
+		  {//5
+			element: '#ltBtn',
+			intro: "To finish one side of a triangle you need to turn as well as go forward.",
+			position: 'left'
+		  },		  
+		  {
+			element: '#source',
+			intro: "Edit the code to make the turtle move and turn the right amount for a triangle.",
+			position: 'right'
+		  },		  
+		  {
+			element: '#recordBtn',
+			intro: "Press 'stop' to exit recording mode and to store the function.",
+			position: 'left'
+		  },
+		  {
+		  	element: '#playBtn',
+			intro: "Once you have recorded a function you can run it by pressing 'play'",
+			position: 'left'
+		  },
+		  {
+			element: '#canvas',
+			intro: "Notice the one command moves the turtle forward and turns it.",
+			position: 'top'
+		  },
+		  {//10
+			element: '#csBtn',
+			intro: "Clear the screen to erase the scratch work.",
+			position: 'left'
+		  },
+		  {
+			element: '#recordBtn',
+			intro: "Next we will try to record a full triangle function.",
+			position: 'left'
+		  },
+		  {
+			element: '#repeatBtn',
+			intro: "It will include repeating the last function for a side 3 times.",
+			position: 'left'
+		  },
+		  {
+			element: '#playBtn',
+			intro: "Click 'play' and then enter 3 to repeat the side funtion 3 times.",
+			position: 'left'
+		  },
+		  {
+			element: '#source',
+			intro: "You can change the name of the function to help you remember what it does.",
+			position: 'right'
+		  },
+		  {//15
+			element: '#source',
+			intro: "Notice the function is now called 'triangle'. To call it you just type the word 'triangle' in the source area.",
+			position: 'right'
+		  },
+		  {
+			element: '#recordBtn',
+			intro: "Pressing 'stop' will exit recording mode and store the function.",
+			position: 'left'
+		  },
+		  {
+			element: '#source',
+			intro: "Now the single command 'triangle' will draw the entire triangle for you like the other commands.",
+			position: 'right'
+		  },
+		  {
+		  	element: '#doItBtn',
+		  	intro: "Press 'do it' to draw the triangle in the canvas",
+		  	position: 'right'
+		  },
+		  {
+			element: '#canvas',
+			intro: "Notice the single command now draws a whole triangle.",
+			position: 'top'
+		  },
+		  {//20
+			element: '#functionsGroupDiv',
+			intro: "Try to complete the challenges using functions.",
+			position: 'top'
 		  }
 		]
 	  });

@@ -122,7 +122,7 @@ function translateCode(s) {
   </head>
 
   <body onLoad='setup(); startIntro();'>
-    <div id="inputDiv" style="width:95%;position:fixed;top:5px;margin-left:1%;background:#888888">
+    <div id="inputDiv" style="width:95%;position:fixed;top:5px;margin-left:1%;background:#888888;border:solid #000000;">
     <div id="sourceCodeDiv" style="float:left;width:60%;display:inline-block;background:#888888">
       <textarea rows=6 id="source" style="width:100%;position:relative;font-family:monaco, monospace; font-size: 16pt" onchange="previewSource(this.value)" onkeyup="previewSource(this.value)">
 to spiral :size :angle
@@ -146,7 +146,7 @@ spiral 0 89
       <button class='pure-button' onClick="runSource('bk 10')">backward</button>
       <br>
       <button class='pure-button' onClick="runSource('rt 5')">rotate right</button>
-      <button class='pure-button' onClick="runSource('lt 5')">rotate left</button>
+      <button class='pure-button' id='ltBtn' onClick="runSource('lt 5')">rotate left</button>
       <br>
       <button class='pure-button' onClick="runSource('pu')">pen up</button>
       <button class='pure-button' onClick="runSource('pd')">pen down</button>
@@ -155,14 +155,14 @@ spiral 0 89
       <br>
       <button class='pure-button' id='repeatBtn' onClick="repeatClick()">repeat</button>
       <br>
-      <button class='pure-button' id="recordButton" onClick="recordClick()">record</button>
-      <button class='pure-button pure-button-disabled' disabled id="playButton" onClick="playClick()">play</button>
+      <button class='pure-button' id="recordBtn" onClick="recordClick()">record</button>
+      <button class='pure-button pure-button-disabled' id="playBtn" onClick="playClick()">play</button>
       <br>
     </div>
 
   </div>
 
-    <div id="canvasDiv">
+    <div id="canvasDiv" style="width:100%">
       <span id='locationText'>200,200,0</span>
     </div>
 
