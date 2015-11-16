@@ -124,7 +124,7 @@ function translateCode(s) {
   <body onLoad='setup(); startIntro();'>
     <div id="inputDiv" style="width:95%;position:fixed;top:5px;margin-left:1%;background:#888888;border:solid #000000;">
     <div id="sourceCodeDiv" style="float:left;width:60%;display:inline-block;background:#888888">
-      <textarea rows=6 id="source" style="width:100%;position:relative;font-family:monaco, monospace; font-size: 16pt" onchange="previewSource(this.value)" onkeyup="previewSource(this.value)">
+      <textarea rows=6 id="source" style="width:100%;position:relative;font-family:monaco, monospace; font-size: 16pt;" onchange="previewSource(this.value)" onfocus="previewSource(this.value)" onkeyup="previewSource(this.value)">
 to spiral :size :angle
   if :size < 100 [
     fd :size

@@ -40,6 +40,23 @@ function onShortCutKey(evt) {
   return false
 };
 
+function setCaretSelection(field, start, end) {
+    field.focus();
+    // IE
+    if(typeof field.selectionEnd == "undefined") {
+        var range = field.createTextRange()
+        range.expand("textedit");
+        var dStart = start - (field.value.substring(0, start).split("\n").length - 1);
+        var dEnd = end - field.value.length + field.value.substring(end + 1).split("\n").length - 1
+        range.moveStart("character", dStart)
+        range.moveEnd("character", dEnd)
+        range.select();
+    } else {
+        field.selectionStart = start;
+        field.selectionEnd = end;
+    }
+};
+
 function doIt() {
   var result = runSource(getSource());
   if (result)

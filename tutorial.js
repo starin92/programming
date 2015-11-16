@@ -383,7 +383,32 @@ function startChallengeIntro(name){
 	  		switch(this._currentStep){
 	  			case 1:
 	  				runSource('clearscreen');
+	  				document.getElementById('challenge14Btn').click();
 	  				break;
+	  			case 2:
+	  				var s = document.getElementById("source");
+	  				s.value = "to triangle\n  repeat 3 [\n    fd 40\n    lt 120  ]\nend\n";
+	  				break;
+	  			case 3:
+	  				var s = document.getElementById("source");
+	  				s.value = "to triangle :size\n  repeat 3 [\n    fd 40\n    lt 120  ]\nend\n";
+	  				setCaretSelection(s,12,17);
+	  				break;
+	  			case 4:
+	  				var s = document.getElementById("source");
+	  				s.value = "to triangle :size\n  repeat 3 [\n    fd :size\n    lt 120  ]\nend\n";
+	  				setCaretSelection(s,38,43);
+	  				break;
+	  			case 6:
+	  				lastElement.click();
+	  				var s = document.getElementById("source");
+	  				s.value = "triangle 40\n";
+	  				break;
+	  			case 8:
+	  				lastElement.click();
+	  			case 9:
+	  				var s = document.getElementById("source");
+	  				s.value = "triangle 50\ntriangle 60\n";
 	  		}
 	  	}
 	  	lastElement = targetElement;
@@ -391,12 +416,59 @@ function startChallengeIntro(name){
 	  intro.setOptions({
 		steps: [
 		  { 
-			intro: ""
+			intro: "These challenges use function parameters/arguments."
 		  },
 		  {
-			element: '#',
-			intro: "",
-			position: ''
+			element: '#canvas',
+			intro: "The first challenge requires drawing three different sized triangles.",
+			position: 'top'
+		  },
+		  {
+			element: '#source',
+			intro: "Here is a function to create a fixed size 40 triangle. This triangle length cannot be changed right now.",
+			position: 'right'
+		  },
+		  {
+			element: '#source',
+			intro: "To add a parameter type ':' followed by a name after the function name. Parameters enable changing something about a function each time it is used.",
+			position: 'right'
+		  },
+		  {
+			element: '#source',
+			intro: "To use the parameter in the function put ':<parameterName>' wherever you want to use it. In this case the ':size' parameter determines how far forward the turtle moves.",
+			position: 'right'
+		  }
+		  ,
+		  {
+			element: '#doItBtn',
+			intro: "Press 'do it' to store the new triangle function with a parameter.",
+			position: 'right'
+		  },
+		  {
+			element: '#source',
+			intro: "Try it out by typing 'triangle' then the parameter value. A parameter is required now for triangle to work.",
+			position: 'right'
+		  },
+		  {
+			element: '#doItBtn',
+			intro: "Press 'do it' to draw your triangle with size 40.",
+			position: 'right'
+		  },
+		  {
+			element: '#canvas',
+			intro: "Notice the function drew the triangle with the right size.",
+			position: 'top'
+		  }
+		  ,
+		  {
+			element: '#source',
+			intro: "Try drawing the triangles with different sizes.",
+			position: 'right'
+		  },
+		  {
+			element: '#parametersGroupDiv',
+			intro: "Try to complete all the challenges using parameters.",
+			position: 'top'
 		  }
 		]
 	  });
