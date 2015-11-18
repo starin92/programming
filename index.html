@@ -122,9 +122,9 @@ function translateCode(s) {
   </head>
 
   <body onLoad='setup(); startIntro();'>
-    <div id="inputDiv" style="width:95%;position:fixed;top:5px;margin-left:1%;background:#888888;border:solid #000000;">
-    <div id="sourceCodeDiv" style="float:left;width:60%;display:inline-block;background:#888888">
-      <textarea rows=6 id="source" style="width:100%;position:relative;font-family:monaco, monospace; font-size: 16pt;" onchange="previewSource(this.value)" onfocus="previewSource(this.value)" onkeyup="previewSource(this.value)">
+    <div id="inputDiv" class='input-div'>
+    <div id="sourceCodeDiv" class='input-div'>
+      <textarea rows=6 id="source" onchange="previewSource(this.value)" onfocus="previewSource(this.value)" onkeyup="previewSource(this.value)">
 to spiral :size :angle
   if :size < 100 [
     fd :size
@@ -141,23 +141,27 @@ spiral 0 89
       <br>
     </div>
 
-    <div id="toolbarDiv" style="float:left;width:40%;background-color:#999999;display:inline-block">
-      <button class='pure-button' id='fdBtn' onClick="runSource('fd 10')">forward</button>
-      <button class='pure-button' onClick="runSource('bk 10')">backward</button>
-      <br>
-      <button class='pure-button' onClick="runSource('rt 5')">rotate right</button>
-      <button class='pure-button' id='ltBtn' onClick="runSource('lt 5')">rotate left</button>
-      <br>
-      <button class='pure-button' onClick="runSource('pu')">pen up</button>
-      <button class='pure-button' onClick="runSource('pd')">pen down</button>
-      <button class='pure-button' id='csBtn' onClick="runSource('clearscreen')">clear screen</button>
-      <br>
-      <br>
-      <button class='pure-button' id='repeatBtn' onClick="repeatClick()">repeat</button>
-      <br>
-      <button class='pure-button' id="recordBtn" onClick="recordClick()">record</button>
-      <button class='pure-button pure-button-disabled' id="playBtn" onClick="playClick()">play</button>
-      <br>
+    <div id="toolbarDiv" class='input-div'>
+      <table style="display: table;text-align:right;">
+        <button class='pure-button pure-button-right' id='fdBtn' onClick="runSource('fd 10')">forward</button>
+        <button class='pure-button pure-button-right' onClick="runSource('bk 10')">backward</button>
+      </table>
+      <table style="display: table;text-align:right;">
+        <button class='pure-button pure-button-right' onClick="runSource('rt 5')">rotate right</button>
+        <button class='pure-button pure-button-right' id='ltBtn' onClick="runSource('lt 5')">rotate left</button>
+      </table>
+      <table style="display: table;text-align:right;">
+        <button class='pure-button pure-button-right' onClick="runSource('pu')">pen up</button>
+        <button class='pure-button pure-button-right' onClick="runSource('pd')">pen down</button>
+      </table>
+      <table style="display: table;text-align:right;">
+        <button class='pure-button pure-button-right' id='csBtn' onClick="runSource('clearscreen')">clear screen</button>
+        <button class='pure-button pure-button-right' id='repeatBtn' onClick="repeatClick()">repeat</button>
+      </table>
+      <table style="display: table;text-align:right;">
+        <button class='pure-button pure-button-right' id="recordBtn" onClick="recordClick()">record</button>
+        <button class='pure-button pure-button-right pure-button-disabled' id="playBtn" onClick="playClick()">play</button>
+      </table>
     </div>
 
   </div>
@@ -166,7 +170,7 @@ spiral 0 89
       <span id='locationText'>200,200,0</span>
     </div>
 
-    <div id="challengeDiv"><h2>Challenges</h2></div>
+    <div id="challengeDiv"><h3>Challenges</h3></div>
 
     <br>
   </body>

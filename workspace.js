@@ -159,6 +159,13 @@ function repeatClick(){
   REPEAT=true;
 };
 
+function flashRed(){ 
+      var div = document.getElementById('inputDiv');
+      div.style.borderColor = div.style.borderColor=='rgb(255, 0, 0)'?'#000000':'#FF0000';
+      var sBtn = document.getElementById('recordBtn');
+      sBtn.style['background-color']=div.style.borderColor!='rgb(255, 0, 0)'?'#E6E6E6':'#E60000';
+};
+
 function recordClick(){
   var rb = document.getElementById('recordBtn');
   var db = document.getElementById('doItBtn');
@@ -166,16 +173,14 @@ function recordClick(){
     setSource('to function'+MYFUNNUM+'\nend\n');
     RECORDING=true;
     rb.innerHTML = 'stop';
-    recordFlash = setInterval(function(){ 
-      var div = document.getElementById('inputDiv');
-      div.style.borderColor = div.style.borderColor=='rgb(0, 0, 0)'?'#FF0000':'#000000';
-    },1000);
+    flashRed();
+    recordFlash = setInterval(flashRed,2000);
     db.setAttribute('class','pure-button pure-button-disabled');
   }else{
     RECORDING=false;
     if(MYFUNNUM==0){
       var pb = document.getElementById('playBtn')
-      pb.setAttribute('class','pure-button');
+      pb.setAttribute('class','pure-button pure-button-right');
       pb.disabled = false;
     }
     MYFUNNUM++;
@@ -184,6 +189,7 @@ function recordClick(){
     document.getElementById('inputDiv').style.borderColor='#000000';
     doIt();
     db.setAttribute('class','pure-button');
+    document.getElementById('recordBtn').style['background-color']='#E6E6E6'
   }
 };
 

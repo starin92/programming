@@ -1,6 +1,19 @@
+var HACKER=false;
+
+function foundHacker(){
+	HACKER=true;
+	var fileref=document.createElement("link")
+        fileref.setAttribute("rel", "stylesheet")
+        fileref.setAttribute("type", "text/css")
+        fileref.setAttribute("href", "hack.css")
+        document.getElementsByTagName("head")[0].appendChild(fileref)
+}
+
 function challenges(){
 	this.challengeArray = [];
 	this.challengeIdx = 0;
+
+	this.challengeGroupsSolved = 0;
 
 	this.loadPaths();
 	this.addButtons();
@@ -90,7 +103,12 @@ challenges.prototype.checkGroupSolved = function(i){
 		if(!this.challengeArray[j].solved) break;
 	}
 	var c='chartreuse';
-	if(j===top+1) c='#FFFF66';
+	if(j===top+1){
+		c='#FFFF66';
+		if(++this.challengeGroupsSolved===4){
+			foundHacker();
+		}
+	}
 	document.getElementById(name+'GroupDiv').style['borderColor'] = c;
 
 }
@@ -114,7 +132,7 @@ challenges.prototype.loadPaths = function(){
 
 	var sides = [6,12,24];
 	for(var sIdx=0;sIdx<sides.length;sIdx++){
-		paths=this.regularPolygon(sides[sIdx],sIdx==2?dim/2:dim,200,200);
+		paths=this.regularPolygon(sides[sIdx],sIdx==2?dim/2:dim,200,200,sIdx==2);
 		this.addChallenge(paths.slice(0,2))
 		this.addChallenge(paths);
 	}
@@ -131,13 +149,13 @@ challenges.prototype.loadPaths = function(){
 	//adding multiple squares
 	var i;
 	paths=[];
-	for(i=0;i<3;i++){
+	for(i=0;i<4;i++){
 		paths=paths.concat(this.regularPolygon(4,dim,200+dim*i,200));
 	}
 	this.addChallenge(paths);
 
 	paths=[];
-	for(i=0;i<3;i++){
+	for(i=0;i<4;i++){
 		paths=paths.concat(this.regularPolygon(3,dim,200+dim*i,200,true));
 		paths=paths.concat(this.regularPolygon(4,dim,200+dim*i,200));
 	}

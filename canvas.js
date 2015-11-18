@@ -14,7 +14,7 @@ CanvasState.prototype.drawTurtle = function(turtleObj){
 	var x = turtleObj.x();
 	var y = turtleObj.y();
 	var angle = turtleObj.angle();
-	this.ctxt.fillStyle=turtleObj.isPreview?"#999999":"#000000";
+	this.ctxt.fillStyle=turtleObj.isPreview?"#999999":HACKER?"#FFFFFF":"#000000";
 	
 	this.ctxt.beginPath();
 	xdisp = Math.cos(angle)*5;
@@ -44,7 +44,7 @@ CanvasState.prototype.draw = function(){
 		this.ctxt.stroke();
 	}
 
-	this.ctxt.strokeStyle = "#000000";
+	this.ctxt.strokeStyle = HACKER?"#FFFFFF":"#000000";
 	for(var i=0;i<this.turtle.lines.length;i++){
 		this.ctxt.beginPath();
 		this.ctxt.moveTo(this.turtle.lines[i][0][0],this.turtle.lines[i][0][1]);
@@ -75,6 +75,7 @@ CanvasState.prototype.addPreviewLine = function(startPos,endPos){
 }
 
 CanvasState.prototype.clear = function(){
+	this.points = [];
 	this.turtle.lines = [];
 	this.ctxt.clearRect(0,0,this.canvas.width,this.canvas.height);
 	this.draw();

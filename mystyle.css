@@ -5,10 +5,14 @@
 	text-align:left;
 }
 
+.hacker-text-button {
+	color:white;
+}
+
 .pure-button, .challenge-button, .challenge-button-solved {
     /* Structure */
     margin: .25em;
-    display: inline-block;
+    display: block;
     zoom: 1;
     line-height: normal;
     white-space: nowrap;
@@ -23,6 +27,15 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+.challenge-button, .challenge-button-solved {
+	display: inline-block;
+}
+
+.pure-button-right {
+	float:right;
+	align:right;
 }
 
 /* Firefox: Get rid of the inner focus border */
@@ -93,10 +106,46 @@
     border: none;
     background-image: none;
     filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-    filter: alpha(opacity=40);
-    -khtml-opacity: 0.40;
-    -moz-opacity: 0.40;
-    opacity: 0.40;
+    filter: alpha(opacity=20);
+    -khtml-opacity: 0.20;
+    -moz-opacity: 0.20;
+    opacity: 0.20;
     cursor: not-allowed;
     box-shadow: none;
+}
+
+.pure-button-red {
+	background-color:#E60000;
+}
+
+
+#inputDiv, #inputDivHidden {
+	width:95%;
+	position:fixed;
+	top:5px;
+	margin-left:1%;
+	border:solid #000000
+}
+
+#sourceCodeDiv, #sourceCodeDivHidden {
+	float:left;
+	width:60%;
+	display:inline-block;
+}
+
+#source, #sourceHidden {
+	width:100%;
+	position:relative;
+	font-family:monaco, monospace;
+	font-size: 16pt
+}
+
+#toolbarDiv, #toolbarDivHidden {
+	float:right;
+	width:40%;
+	display:inline-block;	
+}
+
+.input-div {
+	background-color:#999999;
 }
