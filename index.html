@@ -89,21 +89,8 @@ Logo=objectThatDelegatesTo(OMeta,{
 
   document.getElementById("source").onkeydown = onShortCutKey
 
-  //Copy the div and add it so the canvas stays in view
-  addDummyControls();
-
   canvasState = setUpCanvas(); 
   //window.onresize = resizeCanvas;
-}
-
-function addDummyControls() {
-    var original = document.getElementById('inputDiv');
-    var clone = original.cloneNode(true); // "deep" clone
-    clone.style.position='static';
-    clone.style.visibility='hidden';
-    deepIdChange(clone);
-    // or clone.id = ""; if the divs don't need an ID
-    original.parentNode.insertBefore(clone,original);
 }
 
 function deepIdChange(node){

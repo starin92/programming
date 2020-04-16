@@ -119,28 +119,29 @@
 }
 
 
-#inputDiv, #inputDivHidden {
+#inputDiv {
 	width:95%;
-	position:fixed;
+	display:inline-block;
+	position:sticky;
 	top:5px;
-	margin-left:1%;
+	margin-left:2.5%;
 	border:solid #000000
 }
 
-#sourceCodeDiv, #sourceCodeDivHidden {
+#sourceCodeDiv {
 	float:left;
 	width:60%;
 	display:inline-block;
 }
 
-#source, #sourceHidden {
+#source {
 	width:100%;
 	position:relative;
 	font-family:monaco, monospace;
 	font-size: 16pt
 }
 
-#toolbarDiv, #toolbarDivHidden {
+#toolbarDiv {
 	float:right;
 	width:40%;
 	display:inline-block;	
