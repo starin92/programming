@@ -119,7 +119,7 @@
 }
 
 
-#inputDiv {
+#inputDiv, #challengeDiv {
 	width:95%;
 	display:inline-block;
 	position:sticky;
@@ -147,6 +147,6 @@
 	display:inline-block;	
 }
 
-.input-div {
-	background-color:#999999;
+.input-div, .challenge-div {
+	background-color:slategray;
 }

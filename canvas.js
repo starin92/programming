@@ -97,7 +97,7 @@ function setUpCanvas(){
 	var dim = 400;
 	canvas.setAttribute('width',dim)
 	canvas.setAttribute('height',dim)
-	canvas.setAttribute('style','border:1px solid #000000;width:95%;margin-left:2.5%')
+	canvas.setAttribute('style','border:3px solid #000000;width:95%;margin-left:2.5%')
 	canvas.setAttribute('id','canvas');
     
     var cDiv = document.getElementById('canvasDiv')
