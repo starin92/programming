@@ -1,3 +1,33 @@
+/* box stuff is for formatting the pinned menu and footer */
+html,
+body {
+  height: 100%;
+  margin: 0
+}
+
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.box .row.header {
+  flex: 0 1 auto;
+  /* The above is shorthand for:
+  flex-grow: 0,
+  flex-shrink: 1,
+  flex-basis: auto
+  */
+}
+
+.box .row.content {
+  flex: 1 1 auto;
+}
+
+.box .row.footer {
+  flex: 0 1 40px;
+}
+
 .text-button {
 	background:none;
 	border:none;
@@ -119,33 +149,45 @@
 }
 
 
-#inputDiv, #inputDivHidden {
+#inputDiv, #challengeDiv {
 	width:95%;
-	position:fixed;
+	display:inline-block;
 	top:5px;
-	margin-left:1%;
+	margin-left:2.5%;
 	border:solid #000000
 }
 
-#sourceCodeDiv, #sourceCodeDivHidden {
+#sourceCodeDiv {
 	float:left;
 	width:60%;
 	display:inline-block;
 }
 
-#source, #sourceHidden {
+#source {
 	width:100%;
 	position:relative;
 	font-family:monaco, monospace;
 	font-size: 16pt
 }
 
-#toolbarDiv, #toolbarDivHidden {
+#toolbarDiv {
 	float:right;
 	width:40%;
 	display:inline-block;	
 }
 
-.input-div {
-	background-color:#999999;
+.input-div, .challenge-div {
+	background-color:slategray;
+}
+
+#canvas {
+	border:3px solid #000000;
+	margin-left: auto; 
+	margin-right: auto;
+	display: block;
+}
+
+#locationText {
+	display: block;
+	text-align: center;
 }

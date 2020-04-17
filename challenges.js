@@ -1,4 +1,6 @@
-var HACKER=false;
+var HACKER = false;
+var MIDDLE = 150;
+var THICKNESS = 5;
 
 function foundHacker(){
 	HACKER=true;
@@ -115,24 +117,24 @@ challenges.prototype.checkGroupSolved = function(i){
 
 challenges.prototype.loadPaths = function(){
 	var paths = [];
-	var dim = 40;
+	var dim = 30;
 
 	//***repeat challenges***
-	paths.push({start:[200,200],end:[200+dim,200]});
+	paths.push({start:[MIDDLE,MIDDLE],end:[MIDDLE+dim,MIDDLE]});
 	this.addChallenge(paths);
 
 	//paths = [];
-	paths=this.regularPolygon(4,dim,200,200);
+	paths=this.regularPolygon(4,dim,MIDDLE,MIDDLE);
 	this.addChallenge(paths.slice(0,2))
 	this.addChallenge(paths);
 
-	paths=this.regularPolygon(3,dim,200,200,true);
+	paths=this.regularPolygon(3,dim,MIDDLE,MIDDLE,true);
 	this.addChallenge(paths.slice(0,2))
 	this.addChallenge(paths);
 
 	var sides = [6,12,24];
 	for(var sIdx=0;sIdx<sides.length;sIdx++){
-		paths=this.regularPolygon(sides[sIdx],sIdx==2?dim/2:dim,200,200,sIdx==2);
+		paths=this.regularPolygon(sides[sIdx],sIdx==2?dim/2:dim,MIDDLE,MIDDLE,sIdx==2);
 		this.addChallenge(paths.slice(0,2))
 		this.addChallenge(paths);
 	}
@@ -142,7 +144,7 @@ challenges.prototype.loadPaths = function(){
 	var i;
 	paths=[];
 	for(i=0;i<4;i++){
-		paths=paths.concat(this.regularPolygon(3,dim,200+dim*i,200,true));
+		paths=paths.concat(this.regularPolygon(3,dim,MIDDLE+dim*i,MIDDLE,true));
 	}
 	this.addChallenge(paths);
 
@@ -150,14 +152,14 @@ challenges.prototype.loadPaths = function(){
 	var i;
 	paths=[];
 	for(i=0;i<4;i++){
-		paths=paths.concat(this.regularPolygon(4,dim,200+dim*i,200));
+		paths=paths.concat(this.regularPolygon(4,dim,MIDDLE+dim*i,MIDDLE));
 	}
 	this.addChallenge(paths);
 
 	paths=[];
 	for(i=0;i<4;i++){
-		paths=paths.concat(this.regularPolygon(3,dim,200+dim*i,200,true));
-		paths=paths.concat(this.regularPolygon(4,dim,200+dim*i,200));
+		paths=paths.concat(this.regularPolygon(3,dim,MIDDLE+dim*i,MIDDLE,true));
+		paths=paths.concat(this.regularPolygon(4,dim,MIDDLE+dim*i,MIDDLE));
 	}
 	this.addChallenge(paths);
 
@@ -167,7 +169,7 @@ challenges.prototype.loadPaths = function(){
 	var offset=0;
 	for(i=0;i<3;i++){
 		size=10*i+dim;
-		paths=paths.concat(this.regularPolygon(3,size,200+offset,200,true));
+		paths=paths.concat(this.regularPolygon(3,size,MIDDLE+offset,MIDDLE,true));
 		offset+=size;
 	}
 	this.addChallenge(paths);
@@ -177,7 +179,7 @@ challenges.prototype.loadPaths = function(){
 	var offset=0;
 	for(i=0;i<3;i++){
 		size=10*i+dim;
-		paths=paths.concat(this.regularPolygon(4,size,200+offset,200));
+		paths=paths.concat(this.regularPolygon(4,size,MIDDLE+offset,MIDDLE));
 		offset+=size;
 	}
 	this.addChallenge(paths);
@@ -187,8 +189,8 @@ challenges.prototype.loadPaths = function(){
 	var offset=0;
 	for(i=0;i<3;i++){
 		size=10*i+dim;
-		paths=paths.concat(this.regularPolygon(3,size,200+offset,200,true));
-		paths=paths.concat(this.regularPolygon(4,size,200+offset,200));
+		paths=paths.concat(this.regularPolygon(3,size,MIDDLE+offset,MIDDLE,true));
+		paths=paths.concat(this.regularPolygon(4,size,MIDDLE+offset,MIDDLE));
 		offset+=size;
 	}
 	this.addChallenge(paths);
@@ -255,7 +257,7 @@ challenges.prototype.draw = function(cs){
 	cs.ctxt.fillStyle=theChallenge.solved?'#FFFF66':'#00BFFF';
 	for(var i=0;i<theChallenge.points.length;i++){
 		cs.ctxt.beginPath();
-		cs.ctxt.arc(theChallenge.points[i][0],theChallenge.points[i][1],7.5,0,2*Math.PI);
+		cs.ctxt.arc(theChallenge.points[i][0],theChallenge.points[i][1],THICKNESS,0,2*Math.PI);
 		cs.ctxt.fill();
 	}
 	cs.ctxt.fillStyle='#000000';
@@ -269,7 +271,7 @@ challenges.prototype.checkSolved = function(cs){
 	for(var i=0;i<theChallenge.points.length;i++){
 		var p1 = theChallenge.points[i];
 		for(var j=0;j<cs.points.length;j++){
-			if(distBetween(p1,cs.points[j])<=12){
+			if(distBetween(p1,cs.points[j])<=THICKNESS*2){
 				break;
 			}
 		}

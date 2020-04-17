@@ -1,3 +1,5 @@
+var DIMENSION = 30
+var DIMENSION_STR= String(DIMENSION)
 var lastElement;
 
 function startIntro(){
@@ -26,16 +28,16 @@ function startIntro(){
   intro.setOptions({
 	steps: [
 	  { 
-		intro: "This is the Logo Learning tool. Click next to learn about it or skip if you've aleady seen the tutorial."
+		intro: 'This is the Logo Learning tool. Click next to learn about it or skip if you\'ve aleady seen the tutorial.'
 	  },
 	  {
 		element: '#canvas',
-		intro: "The turtle on the screen is your main tool. It can move forwards, backwards, and rotate leaving a line wherever it goes.",
+		intro: 'The turtle on the screen is your main tool. It can move forwards, backwards, and rotate leaving a line wherever it goes.',
 		position: 'top'
 	  },
 	  {
 		element: '#toolbarDiv',
-		intro: "There are three methods of input. First, is the button toolbar.",
+		intro: 'There are three methods of input. First, is the button toolbar.',
 		position: 'left'
 	  },
 	  {
@@ -45,7 +47,7 @@ function startIntro(){
 	  },
 	  {
 		element: '#canvas',
-		intro: "Notice the turtle moved forward in the direction it was pointed.",
+		intro: 'Notice the turtle moved forward in the direction it was pointed.',
 		position: 'top'
 	  },
 	  {
@@ -55,42 +57,42 @@ function startIntro(){
 	  },
 	  {
 		element: '#sourceCodeDiv',
-		intro: "The second method input is the soure code area. Here commands can be edited.",
+		intro: 'The second method input is the soure code area. Here commands can be edited.',
 		position: 'right'
 	  },	  
 	  {
 		element: '#doItBtn',
-		intro: "To run some code from here click the 'do it' button.",
+		intro: 'To run some code from here click the "do it" button.',
 		position: 'bottom'
 	  },
 	  {
 		element: '#canvas',
-		intro: "Notice the turtle moved 100 units backwards",
+		intro: 'Notice the turtle moved 100 units backwards',
 		position: 'top'
 	  },
 	  {
 		element: '#canvas',
-		intro: "The third method of input is the canvas itself. Clicking causes the turtle to turn and go to that location.",
+		intro: 'The third method of input is the canvas itself. Clicking causes the turtle to turn and go to that location.',
 		position: 'top'
 	  },
 	  {
 		element: '#source',
-		intro: "Observe that two commands were generated this time in the source code area.",
+		intro: 'Observe that two commands were generated this time in the source code area.',
 		position: 'right'
 	  },
 	  {
 	  	element: '#challengeDiv',
-	  	intro: "Once you can use all three inputs try to complete the challenges by selecting a category.",
+	  	intro: 'Once you can use all three inputs try to complete the challenges by selecting a category.',
 		position: 'top'
 	  },
 	  {
 	  	element: '#basicsGroupDiv',
-	  	intro: "Start with basics and work your way through them all.",
+	  	intro: 'Start with basics and work your way through them all.',
 		position: 'top'
 	  },
 	  {
 	  	element: '#csBtn',
-	  	intro: "Clicking 'clear screen' will reset the turtle. Draw some more or try one of the challenges.",
+	  	intro: 'Clicking "clear screen" will reset the turtle. Draw some more or try one of the challenges.',
 		position: 'left'
 	  }
 	]
@@ -127,46 +129,46 @@ function startChallengeIntro(name){
 	  intro.setOptions({
 		steps: [
 		  { 
-			intro: "The challenges present a path to complete. Move the turtle through the entire path to complete the challenge."
+			intro: 'The challenges present a path to complete. Move the turtle through the entire path to complete the challenge.'
 		  },
 		  {
 			element: '#challenge0Btn',
-			intro: "Select a challenge by clicking on it to display it in the canvas.",
+			intro: 'Select a challenge by clicking on it to display it in the canvas.',
 			position: 'bottom'
 		  },
 		  {
 			element: '#canvas',
-			intro: "The blue path is the one you must complete.",
+			intro: 'The blue path is the one you must complete.',
 			position: 'bottom'
 		  },
 		  {
 			element: '#fdBtn',
-			intro: "It appears the turtle needs to move forward.",
+			intro: 'It appears the turtle needs to move forward.',
 			position: 'left'
 		  },
 		  {
 			element: '#canvas',
-			intro: "It appears the turtle needs to go a bit farther.",
+			intro: 'It appears the turtle needs to go a bit farther.',
 			position: 'top'
 		  },
 		  {
 			element: '#source',
-			intro: "Edit the generated code to move the remaining distance",
+			intro: 'Edit the generated code to move the remaining distance',
 			position: 'right'
 		  },
 		  {
 			element: '#doItBtn',
-			intro: "Press 'do it' to run the newly typed code.",
+			intro: 'Press "do it" to run the newly typed code.',
 			position: 'right'
 		  },
 		  {
 			element: '#canvas',
-			intro: "Notice the path changed colors to indicate it was completed.",
+			intro: 'Notice the path changed colors to indicate it was completed.',
 			position: 'top'
 		  },
 		  {
 			element: '#basicsGroupDiv',
-			intro: "Try to complete the rest of the challenges here.",
+			intro: 'Try to complete the rest of the challenges here.',
 			position: 'top'
 		  }
 		]
@@ -181,7 +183,7 @@ function startChallengeIntro(name){
 	  				document.getElementById('challenge3Btn').click();
 	  				break;
 	  			case 1:
-	  				setSource('fd 40\nlt 120');
+	  				setSource('fd ' + DIMENSION_STR + '\nlt 120');
 	  				break;
 	  			case 4:
 	  				lastElement.click();
@@ -195,36 +197,36 @@ function startChallengeIntro(name){
 	  intro.setOptions({
 		steps: [
 		  { 
-			intro: "This set of challenges makes use of the repeat commands."
+			intro: 'This set of challenges makes use of the repeat commands.'
 		  },
 		  {
 			element: '#canvas',
-			intro: "The first challenge requires you to draw a line and turn. This can be acheived doing the same thing twice.",
+			intro: 'The first challenge requires you to draw a line and turn. This can be acheived doing the same thing twice.',
 			position: 'top'
 		  },
 		  {
 			element: '#source',
-			intro: "These two commands draw the line and turn the proper amount.",
+			intro: 'These two commands draw the line and turn the proper amount.',
 			position: 'right'
 		  },
 		  {
 			element: '#repeatBtn',
-			intro: "Click the repeat button then another command to do it multiple times.",
+			intro: 'Click the repeat button then another command to do it multiple times.',
 			position: 'left'
 		  },
 		  {
 			element: '#doItBtn',
-			intro: "Next click the 'do it' button. In the dialog enter 2 then press OK to run the commands twice.",
+			intro: 'Next click the "do it" button. In the dialog enter 2 then press OK to run the commands twice.',
 			position: 'right'
 		  },
 		  {
 			element: '#source',
-			intro: "Notice the command that was generated. Anything in the [] is done the specified number of times.",
+			intro: 'Notice the command that was generated. Anything in the [] is done the specified number of times.',
 			position: 'right'
 		  },
 		  {
 			element: '#repeatGroupDiv',
-			intro: "Try to complete the rest of the challenges using repeat.",
+			intro: 'Try to complete the rest of the challenges using repeat.',
 			position: 'top'
 		  }
 
@@ -253,17 +255,17 @@ function startChallengeIntro(name){
 	  				lastElement.click();
 	  				break;
 	  			case 7:
-	  				document.getElementById("source").value = 'to function'+MYFUNNUM+'\nfd 40\nlt 120\nend\n';
+	  				document.getElementById('source').value = 'to function'+MYFUNNUM+'\nfd ' + DIMENSION_STR + '\nlt 120\nend\n';
 	  				break;
 	  			case 8:
 	  				if(RECORDING) lastElement.click();
 	  				break;
 	  			case 15:
-	  				document.getElementById("source").value = 'to triangle\nrepeat 3 [ function'+(MYFUNNUM-1)+' ]\nend\n';
+	  				document.getElementById('source').value = 'to triangle\nrepeat 3 [ function'+(MYFUNNUM-1)+' ]\nend\n';
 	  				break;
 	  			case 17:
 	  				if(RECORDING) lastElement.click();
-	  				setSource('triangle\nfd 40\ntriangle');
+	  				setSource('triangle\nfd ' + DIMENSION_STR + '\ntriangle');
 	  				break;
 	  		}
 	  	}
@@ -272,106 +274,106 @@ function startChallengeIntro(name){
 	  intro.setOptions({
 		steps: [
 		  { 
-			intro: "These challenges use functions with the 'to ... end' syntax."
+			intro: 'These challenges use functions with the "to ... end" syntax.'
 		  },
 		  {
 			element: '#canvas',
-			intro: "The first challenge requires you to draw 4 triangles. You can do this by recording funtions.",
+			intro: 'The first challenge requires you to draw 4 triangles. You can do this by recording funtions.',
 			position: 'top'
 		  },
 		  {
 			element: '#recordBtn',
-			intro: "Press 'record' to create a function. A function will be a set of commands you can run with one command.",
+			intro: 'Press "record" to create a function. A function will be a set of commands you can run with one command.',
 			position: 'left'
 		  },
 		  {
 			element: '#fdBtn',
-			intro: "Once you press 'record', it adds each command you enter to the function until you press 'stop'",
+			intro: 'Once you press "record", it adds each command you enter to the function until you press "stop"',
 			position:'left'
 		  },
 		  {
 			element: '#source',
-			intro: "Notice the to function# ... end was added to the source area.",
+			intro: 'Notice the to function# ... end was added to the source area.',
 			position: 'right'
 		  },		  
 		  {//5
 			element: '#ltBtn',
-			intro: "To finish one side of a triangle you need to turn as well as go forward.",
+			intro: 'To finish one side of a triangle you need to turn as well as go forward.',
 			position: 'left'
 		  },		  
 		  {
 			element: '#source',
-			intro: "Edit the code to make the turtle move and turn the right amount for a triangle.",
+			intro: 'Edit the code to make the turtle move and turn the right amount for a triangle.',
 			position: 'right'
 		  },		  
 		  {
 			element: '#recordBtn',
-			intro: "Press 'stop' to exit recording mode and to store the function.",
+			intro: 'Press "stop" to exit recording mode and to store the function.',
 			position: 'left'
 		  },
 		  {
 		  	element: '#playBtn',
-			intro: "Once you have recorded a function you can run it by pressing 'play'",
+			intro: 'Once you have recorded a function you can run it by pressing "play"',
 			position: 'left'
 		  },
 		  {
 			element: '#canvas',
-			intro: "Notice the one command moves the turtle forward and turns it.",
+			intro: 'Notice the one command moves the turtle forward and turns it.',
 			position: 'top'
 		  },
 		  {//10
 			element: '#csBtn',
-			intro: "Clear the screen to erase the scratch work.",
+			intro: 'Clear the screen to erase the scratch work.',
 			position: 'left'
 		  },
 		  {
 			element: '#recordBtn',
-			intro: "Next we will try to record a full triangle function.",
+			intro: 'Next we will try to record a full triangle function.',
 			position: 'left'
 		  },
 		  {
 			element: '#repeatBtn',
-			intro: "It will include repeating the last function for a side 3 times.",
+			intro: 'It will include repeating the last function for a side 3 times.',
 			position: 'left'
 		  },
 		  {
 			element: '#playBtn',
-			intro: "Click 'play' and then enter 3 to repeat the side funtion 3 times.",
+			intro: 'Click "play" and then enter 3 to repeat the side funtion 3 times.',
 			position: 'left'
 		  },
 		  {
 			element: '#source',
-			intro: "You can change the name of the function to help you remember what it does.",
+			intro: 'You can change the name of the function to help you remember what it does.',
 			position: 'right'
 		  },
 		  {//15
 			element: '#source',
-			intro: "Notice the function is now called 'triangle'. To call it you just type the word 'triangle' in the source area.",
+			intro: 'Notice the function is now called "triangle". To call it you just type the word "triangle" in the source area.',
 			position: 'right'
 		  },
 		  {
 			element: '#recordBtn',
-			intro: "Pressing 'stop' will exit recording mode and store the function.",
+			intro: 'Pressing "stop" will exit recording mode and store the function.',
 			position: 'left'
 		  },
 		  {
 			element: '#source',
-			intro: "Now the single command 'triangle' will draw the entire triangle for you like the other commands.",
+			intro: 'Now the single command "triangle" will draw the entire triangle for you like the other commands.',
 			position: 'right'
 		  },
 		  {
 		  	element: '#doItBtn',
-		  	intro: "Press 'do it' to draw the triangle in the canvas",
+		  	intro: 'Press "do it" to draw the triangle in the canvas',
 		  	position: 'right'
 		  },
 		  {
 			element: '#canvas',
-			intro: "Notice the single command now draws a whole triangle.",
+			intro: 'Notice the single command now draws a whole triangle.',
 			position: 'top'
 		  },
 		  {//20
 			element: '#functionsGroupDiv',
-			intro: "Try to complete the challenges using functions.",
+			intro: 'Try to complete the challenges using functions.',
 			position: 'top'
 		  }
 		]
@@ -386,29 +388,29 @@ function startChallengeIntro(name){
 	  				document.getElementById('challenge14Btn').click();
 	  				break;
 	  			case 2:
-	  				var s = document.getElementById("source");
-	  				s.value = "to triangle\n  repeat 3 [\n    fd 40\n    lt 120  ]\nend\n";
+	  				var s = document.getElementById('source');
+	  				s.value = 'to triangle\n  repeat 3 [\n    fd ' + DIMENSION_STR + '\n    lt 120  ]\nend\n';
 	  				break;
 	  			case 3:
-	  				var s = document.getElementById("source");
-	  				s.value = "to triangle :size\n  repeat 3 [\n    fd 40\n    lt 120  ]\nend\n";
+	  				var s = document.getElementById('source');
+	  				s.value = 'to triangle :size\n  repeat 3 [\n    fd ' + DIMENSION_STR + '\n    lt 120  ]\nend\n';
 	  				setCaretSelection(s,12,17);
 	  				break;
 	  			case 4:
-	  				var s = document.getElementById("source");
-	  				s.value = "to triangle :size\n  repeat 3 [\n    fd :size\n    lt 120  ]\nend\n";
+	  				var s = document.getElementById('source');
+	  				s.value = 'to triangle :size\n  repeat 3 [\n    fd :size\n    lt 120  ]\nend\n';
 	  				setCaretSelection(s,38,43);
 	  				break;
 	  			case 6:
 	  				lastElement.click();
-	  				var s = document.getElementById("source");
-	  				s.value = "triangle 40\n";
+	  				var s = document.getElementById('source');
+	  				s.value = 'triangle ' + DIMENSION_STR + '\n';
 	  				break;
 	  			case 8:
 	  				lastElement.click();
 	  			case 9:
-	  				var s = document.getElementById("source");
-	  				s.value = "triangle 50\ntriangle 60\n";
+	  				var s = document.getElementById('source');
+	  				s.value = 'triangle ' + String(DIMENSION+10) + '\ntriangle ' + String(DIMENSION+20) + '\n';
 	  		}
 	  	}
 	  	lastElement = targetElement;
@@ -416,58 +418,58 @@ function startChallengeIntro(name){
 	  intro.setOptions({
 		steps: [
 		  { 
-			intro: "These challenges use function parameters/arguments."
+			intro: 'These challenges use function parameters/arguments.'
 		  },
 		  {
 			element: '#canvas',
-			intro: "The first challenge requires drawing three different sized triangles.",
+			intro: 'The first challenge requires drawing three different sized triangles.',
 			position: 'top'
 		  },
 		  {
 			element: '#source',
-			intro: "Here is a function to create a fixed size 40 triangle. This triangle length cannot be changed right now.",
+			intro: 'Here is a function to create a fixed size ' + DIMENSION_STR + ' triangle. This triangle length cannot be changed right now.',
 			position: 'right'
 		  },
 		  {
 			element: '#source',
-			intro: "To add a parameter type ':' followed by a name after the function name. Parameters enable changing something about a function each time it is used.",
+			intro: 'To add a parameter type ":" followed by a name after the function name. Parameters enable changing something about a function each time it is used.',
 			position: 'right'
 		  },
 		  {
 			element: '#source',
-			intro: "To use the parameter in the function put ':<parameterName>' wherever you want to use it. In this case the ':size' parameter determines how far forward the turtle moves.",
+			intro: 'To use the parameter in the function put ":<parameterName>" wherever you want to use it. In this case the ":size" parameter determines how far forward the turtle moves.',
 			position: 'right'
 		  }
 		  ,
 		  {
 			element: '#doItBtn',
-			intro: "Press 'do it' to store the new triangle function with a parameter.",
+			intro: 'Press "do it" to store the new triangle function with a parameter.',
 			position: 'right'
 		  },
 		  {
 			element: '#source',
-			intro: "Try it out by typing 'triangle' then the parameter value. A parameter is required now for triangle to work.",
+			intro: 'Try it out by typing "triangle" then the parameter value. A parameter is required now for triangle to work.',
 			position: 'right'
 		  },
 		  {
 			element: '#doItBtn',
-			intro: "Press 'do it' to draw your triangle with size 40.",
+			intro: 'Press "do it" to draw your triangle with size ' + DIMENSION_STR + '.',
 			position: 'right'
 		  },
 		  {
 			element: '#canvas',
-			intro: "Notice the function drew the triangle with the right size.",
+			intro: 'Notice the function drew the triangle with the right size.',
 			position: 'top'
 		  }
 		  ,
 		  {
 			element: '#source',
-			intro: "Try drawing the triangles with different sizes.",
+			intro: 'Try drawing the triangles with different sizes.',
 			position: 'right'
 		  },
 		  {
 			element: '#parametersGroupDiv',
-			intro: "Try to complete all the challenges using parameters.",
+			intro: 'Try to complete all the challenges using parameters.',
 			position: 'top'
 		  }
 		]
