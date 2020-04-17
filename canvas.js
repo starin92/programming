@@ -94,13 +94,12 @@ CanvasState.prototype.changeChallenge = function(i){
 function setUpCanvas(){
 	var canvas = document.createElement('canvas');
 
-	var dim = 400;
+	var dim = 300;
 	canvas.setAttribute('width',dim)
 	canvas.setAttribute('height',dim)
-	canvas.setAttribute('style','border:3px solid #000000;width:95%;margin-left:2.5%')
 	canvas.setAttribute('id','canvas');
     
-    var cDiv = document.getElementById('canvasDiv')
+    var cDiv = document.getElementById('canvasDiv');
     cDiv.insertBefore(canvas,cDiv.firstChild);
     cDiv.insertBefore(document.createElement('br'),cDiv.children[1]);
 

@@ -138,8 +138,8 @@ Turtle.prototype.setPen = function(writeBool){
 }
 
 Turtle.prototype.clear = function(){
-  this.x(200);
-  this.y(200);
+  this.x(150);
+  this.y(150);
   this.angle(0);
   if(!this.isPreview){
     canvasState.clear();

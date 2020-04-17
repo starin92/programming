@@ -87,17 +87,21 @@ Logo=objectThatDelegatesTo(OMeta,{
 "topLevelCmd":function(){var $elf=this,_fromIdx=this.input.idx;return this._or((function(){return this._apply("decl")}),(function(){return this._apply("cmd")}))},
 "topLevelCmds":function(){var $elf=this,_fromIdx=this.input.idx,xs;return (function(){xs=this._many((function(){return this._apply("topLevelCmd")}));this._apply("spaces");this._apply("end");return (("(function(){var _this=this;" + xs.join(",")) + "})")}).call(this)}})
 
-  document.getElementById("source").onkeydown = onShortCutKey
+  sourceTA = document.getElementById("source")
+  sourceTA.onkeydown = onShortCutKey
+  sourceTA.value = "to spiral :size :angle"      + "\n"
+                 + "  if :size < 100 ["          + "\n"
+                 + "    fd :size"                + "\n"
+                 + "    rt :angle"               + "\n"
+                 + "    spiral :size + 2 :angle" + "\n"
+                 + "  ]"                         + "\n"
+                 + "end"                         + "\n"
+                 + ""                            + "\n"
+                 + "spiral 0 89"                 + "\n"
 
   canvasState = setUpCanvas(); 
   //window.onresize = resizeCanvas;
-}
-
-function deepIdChange(node){
-  node.id+='Hidden';
-  for(var i=0;i<node.children.length;i++){
-      deepIdChange(node.children[i]);
-  }
+  
 }
 
 function translateCode(s) {
@@ -109,58 +113,55 @@ function translateCode(s) {
   </head>
 
   <body onLoad='setup(); startIntro();'>
-    <div id="inputDiv" class='input-div'>
-    <div id="sourceCodeDiv" class='input-div'>
-      <textarea rows=6 id="source" onchange="previewSource(this.value)" onfocus="previewSource(this.value)" onkeyup="previewSource(this.value)">
-to spiral :size :angle
-  if :size < 100 [
-    fd :size
-    rt :angle
-    spiral :size + 2 :angle
-  ]
-end
+    <div class="box">
 
-spiral 0 89
-      </textarea>
-      <br>
-      <button class='pure-button' id="doItBtn" onClick="doIt()">do it (ctrl+d)</button>
-      <input type="checkbox" id="previewingCheckbox" checked="true" onchange="previewCBchange()">Preview Code</input>
-      <br>
-    </div>
+      <div id="inputDiv" class="row header input-div">
+        <div id="sourceCodeDiv" class='input-div'>
+          <textarea rows=3 id="source" onchange="previewSource(this.value)" onfocus="previewSource(this.value)" onkeyup="previewSource(this.value)"></textarea>
+          <br>
+          <button class='pure-button' id="doItBtn" onClick="doIt()">do it (ctrl+d)</button>
+          <input type="checkbox" id="previewingCheckbox" checked="true" onchange="previewCBchange()">Preview Code</input>
+          <br>
+        </div>
 
-    <div id="toolbarDiv" class='input-div'>
-      <table style="display: table;text-align:right;">
-        <button class='pure-button pure-button-right' id='fdBtn' onClick="runSource('fd 10')">forward</button>
-        <button class='pure-button pure-button-right' onClick="runSource('bk 10')">backward</button>
-      </table>
-      <table style="display: table;text-align:right;">
-        <button class='pure-button pure-button-right' onClick="runSource('rt 5')">rotate right</button>
-        <button class='pure-button pure-button-right' id='ltBtn' onClick="runSource('lt 5')">rotate left</button>
-      </table>
-      <table style="display: table;text-align:right;">
-        <button class='pure-button pure-button-right' onClick="runSource('pu')">pen up</button>
-        <button class='pure-button pure-button-right' onClick="runSource('pd')">pen down</button>
-      </table>
-      <table style="display: table;text-align:right;">
-        <button class='pure-button pure-button-right' id='csBtn' onClick="runSource('clearscreen')">clear screen</button>
-        <button class='pure-button pure-button-right' id='repeatBtn' onClick="repeatClick()">repeat</button>
-      </table>
-      <table style="display: table;text-align:right;">
-        <button class='pure-button pure-button-right' id="recordBtn" onClick="recordClick()">record</button>
-        <button class='pure-button pure-button-right pure-button-disabled' id="playBtn" onClick="playClick()">play</button>
-      </table>
-    </div>
+        <div id="toolbarDiv" class='input-div'>
+          <table style="display: table;text-align:right;">
+            <button class='pure-button pure-button-right' id='fdBtn' onClick="runSource('fd 10')">forward</button>
+            <button class='pure-button pure-button-right' onClick="runSource('bk 10')">backward</button>
+          </table>
+          <table style="display: table;text-align:right;">
+            <button class='pure-button pure-button-right' onClick="runSource('rt 5')">rotate right</button>
+            <button class='pure-button pure-button-right' id='ltBtn' onClick="runSource('lt 5')">rotate left</button>
+          </table>
+          <table style="display: table;text-align:right;">
+            <button class='pure-button pure-button-right' onClick="runSource('pu')">pen up</button>
+            <button class='pure-button pure-button-right' onClick="runSource('pd')">pen down</button>
+          </table>
+          <table style="display: table;text-align:right;">
+            <button class='pure-button pure-button-right' id='csBtn' onClick="runSource('clearscreen')">clear screen</button>
+            <button class='pure-button pure-button-right' id='repeatBtn' onClick="repeatClick()">repeat</button>
+          </table>
+          <table style="display: table;text-align:right;">
+            <button class='pure-button pure-button-right' id="recordBtn" onClick="recordClick()">record</button>
+            <button class='pure-button pure-button-right pure-button-disabled' id="playBtn" onClick="playClick()">play</button>
+          </table>
+        </div>
 
-  </div>
-
-    <div id="canvasDiv" style="width:100%">
-      <div style="width:95%; margin-left:2.5%;">
-      <span id='locationText'>200,200,0</span>
       </div>
+
+
+      <div id="canvasDiv" class="row content">
+        <div style="width:95%; margin-left:2.5%;">
+          <span id='locationText'>200,200,0</span>
+        </div>
+      </div>
+
+
+      <div id="challengeDiv" class="row footer challenge-div">
+        <h3>Challenges</h3>
+      </div>
+
+
     </div>
-
-    <div id="challengeDiv" class="challenge-div"><h3>Challenges</h3></div>
-
-    <br>
   </body>
 </html>
